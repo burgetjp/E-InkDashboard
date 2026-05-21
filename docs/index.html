@@ -319,6 +319,72 @@ graph LR
     </section>
 
     <section id="datasources" hidden>
+      <h1>Data Sources</h1>
+      <p class="text-slate-500 text-sm mb-6">All three data sources are fetched on every hourly refresh.</p>
+
+      <h2>NOAA Weather API</h2>
+      <div class="bg-white border border-slate-200 rounded-lg p-5 mb-4">
+        <table>
+          <tbody>
+            <tr><td class="font-medium w-36">Endpoint</td><td><code>https://api.weather.gov/gridpoints/{NOAA_GRID}/forecast</code></td></tr>
+            <tr><td class="font-medium">Default grid</td><td><code>PSR/166,61</code> (Phoenix, AZ area)</td></tr>
+            <tr><td class="font-medium">Fields used</td><td><code>periods[0].name</code>, <code>.temperature</code>, <code>.shortForecast</code>, <code>.detailedForecast</code>, <code>.probabilityOfPrecipitation.value</code></td></tr>
+            <tr><td class="font-medium">Auth</td><td>None — public API. <code>User-Agent: InkyDashboard/1.0</code> header sent per NOAA requirements.</td></tr>
+            <tr><td class="font-medium">On failure</td><td>Raises <code>httpx.HTTPStatusError</code>. Scheduler catches, keeps previous cache, sets <code>cache.noaa_ok = False</code>.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>ZenQuotes</h2>
+      <div class="bg-white border border-slate-200 rounded-lg p-5 mb-4">
+        <table>
+          <tbody>
+            <tr><td class="font-medium w-36">Endpoint</td><td><code>https://zenquotes.io/api/random</code></td></tr>
+            <tr><td class="font-medium">Fields used</td><td><code>[0].q</code> (quote text) · <code>[0].a</code> (author)</td></tr>
+            <tr><td class="font-medium">Auth</td><td>None — free unauthenticated tier.</td></tr>
+            <tr><td class="font-medium">On failure</td><td>Raises <code>httpx.HTTPStatusError</code>. Scheduler catches, keeps previous cache, sets <code>cache.quotes_ok = False</code>.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Basmilius Weather Icons</h2>
+      <div class="bg-white border border-slate-200 rounded-lg p-5 mb-4">
+        <p class="text-sm text-slate-600 mb-3">Open-source SVG icon set (MIT license). Fetched from GitHub raw content and rasterized via <code>cairosvg</code> to RGBA PNG at 120 px. On per-icon failure, a gray placeholder is used — the refresh continues.</p>
+        <table>
+          <tbody>
+            <tr><td class="font-medium w-36">Base URL</td><td><code>https://raw.githubusercontent.com/basmilius/weather-icons/dev/production/fill/svg/</code></td></tr>
+            <tr><td class="font-medium">Fetch timing</td><td>Every refresh via <code>load_all_icons(size=120)</code> — synchronous, blocks the event loop during startup.</td></tr>
+            <tr><td class="font-medium">On failure</td><td>Per-icon gray 120×120 RGBA placeholder. Does not abort the refresh.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Icon Mapping — <code>ICON_MAPPING</code> in app/icons.py</h3>
+      <p class="text-sm text-slate-600 mb-2">First-match-wins, case-insensitive substring match against NOAA <code>shortForecast</code>. Night icons when <code>period_name</code> is "Tonight" or "Overnight".</p>
+      <table>
+        <thead><tr><th>Keywords (any substring match)</th><th>Day Icon</th><th>Night Icon</th></tr></thead>
+        <tbody>
+          <tr><td><code>mostly sunny</code>, <code>mostly clear</code></td><td><code>partly-cloudy-day</code></td><td><code>partly-cloudy-night</code></td></tr>
+          <tr><td><code>partly cloudy</code>, <code>partly sunny</code></td><td><code>partly-cloudy-day</code></td><td><code>partly-cloudy-night</code></td></tr>
+          <tr><td><code>mostly cloudy</code></td><td><code>overcast-day</code></td><td><code>overcast-night</code></td></tr>
+          <tr><td><code>sunny</code>, <code>clear</code>, <code>hot</code></td><td><code>clear-day</code></td><td><code>clear-night</code></td></tr>
+          <tr><td><code>cloudy</code>, <code>overcast</code></td><td><code>cloudy</code></td><td><code>cloudy</code></td></tr>
+          <tr><td><code>freezing drizzle</code>, <code>drizzle</code></td><td><code>partly-cloudy-day-drizzle</code></td><td><code>partly-cloudy-night-drizzle</code></td></tr>
+          <tr><td><code>showers</code>, <code>chance rain</code></td><td><code>partly-cloudy-day-rain</code></td><td><code>partly-cloudy-night-rain</code></td></tr>
+          <tr><td><code>heavy rain</code>, <code>flood</code></td><td><code>extreme-day-rain</code></td><td><code>extreme-night-rain</code></td></tr>
+          <tr><td><code>sleet</code>, <code>freezing rain</code>, <code>wintry mix</code></td><td><code>overcast-day-sleet</code></td><td><code>overcast-night-sleet</code></td></tr>
+          <tr><td><code>rain</code></td><td><code>overcast-day-rain</code></td><td><code>overcast-night-rain</code></td></tr>
+          <tr><td><code>blizzard</code>, <code>heavy snow</code></td><td><code>extreme-day-snow</code></td><td><code>extreme-night-snow</code></td></tr>
+          <tr><td><code>flurries</code>, <code>chance snow</code></td><td><code>partly-cloudy-day-snow</code></td><td><code>partly-cloudy-night-snow</code></td></tr>
+          <tr><td><code>snow</code></td><td><code>overcast-day-snow</code></td><td><code>overcast-night-snow</code></td></tr>
+          <tr><td><code>thunder</code>, <code>storm</code></td><td><code>thunderstorms-day</code></td><td><code>thunderstorms-night</code></td></tr>
+          <tr><td><code>tornado</code>, <code>hurricane</code>, <code>tropical</code></td><td><code>tornado</code></td><td><code>hurricane</code></td></tr>
+          <tr><td><code>fog</code>, <code>mist</code></td><td><code>fog-day</code></td><td><code>fog-night</code></td></tr>
+          <tr><td><code>haze</code>, <code>smoke</code>, <code>dust</code>, <code>sand</code></td><td><code>haze-day</code></td><td><code>haze-night</code></td></tr>
+          <tr><td><code>wind</code>, <code>breezy</code>, <code>blustery</code></td><td><code>wind</code></td><td><code>wind</code></td></tr>
+          <tr><td><em>fallback</em></td><td><code>clear-day</code></td><td><code>clear-night</code></td></tr>
+        </tbody>
+      </table>
     </section>
 
     <section id="profiles" hidden>
