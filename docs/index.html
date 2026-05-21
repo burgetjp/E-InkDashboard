@@ -530,6 +530,74 @@ eink-dashboard/venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000</code></
     </section>
 
     <section id="deployment" hidden>
+      <h1>Deployment</h1>
+
+      <h2>Quick Reference</h2>
+      <pre><code># Run tests
+eink-dashboard/venv/bin/pytest eink-dashboard/tests/
+
+# Start server locally
+eink-dashboard/venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000
+
+# Build and run in Docker (from eink-dashboard/)
+docker compose up --build</code></pre>
+
+      <h2>Local Development</h2>
+      <div class="card">
+        <p class="text-sm text-slate-700">Working directory for all commands is <code>eink-dashboard/</code>. The server starts, runs the initial refresh (fetching weather, quote, and all icons), then listens on port 8000. PNG endpoints are immediately available after the lifespan startup completes.</p>
+      </div>
+
+      <h2>Synology NAS (Production)</h2>
+      <div class="card">
+        <p class="text-sm text-slate-700 mb-2">The <code>eink-dashboard/synology/</code> directory contains a parallel copy of the app. Deploy via Docker Compose on the NAS:</p>
+        <pre><code># On Synology (SSH in, navigate to synology/)
+docker compose up -d --build</code></pre>
+        <ul class="text-sm text-slate-700 mt-2 list-disc list-inside">
+          <li>Port <code>8000</code> mapped to host</li>
+          <li>NAS local IP: <code>10.0.10.123</code></li>
+          <li>Env vars (<code>NOAA_GRID</code>, <code>REFRESH_HOUR_INTERVAL</code>) set in <code>synology/docker-compose.yml</code></li>
+        </ul>
+      </div>
+
+      <h2>Raspberry Pi Setup</h2>
+      <div class="card">
+        <p class="text-sm text-slate-700 mb-2">Cron runs <code>dailyDash.sh</code> at <code>:30</code> each hour. The script fetches the PNG from the NAS and pushes it to the e-ink display:</p>
+        <pre><code>#!/bin/bash
+SERVER="http://10.0.10.123:8000"
+PROFILE="joe"           # change to "sam" for Sam's display
+TMP_PNG="/tmp/dashboard.png"
+
+curl -sf --retry 3 --retry-delay 5 --max-time 30 \
+  "${SERVER}/dashboard/${PROFILE}.png" > "${TMP_PNG}" || exit 1
+/home/red/Dev/scripts/dailyClear.py
+/home/red/Dev/scripts/dailyEink.py "${TMP_PNG}"
+rm -f "${TMP_PNG}"</code></pre>
+        <p class="text-sm text-slate-600 mt-2"><code>dailyClear.py</code> and <code>dailyEink.py</code> are existing Pi-side scripts — unchanged from the old pipeline. <code>killFirefox.sh</code> is no longer needed (artifact of the old Node.js screenshot approach).</p>
+      </div>
+
+      <h2>Data Flow</h2>
+      <div class="mermaid">
+sequenceDiagram
+    participant Pi as Pi (cron :30)
+    participant API as FastAPI (Synology :8000)
+    participant NOAA as NOAA Weather API
+    participant ZQ as ZenQuotes
+    participant SVG as Basmilius SVGs
+
+    Note over API: APScheduler fires at :00
+    API->>NOAA: GET /gridpoints/PSR/166,61/forecast
+    NOAA-->>API: weather JSON
+    API->>ZQ: GET /api/random
+    ZQ-->>API: quote JSON
+    API->>SVG: fetch SVGs (18 icons)
+    SVG-->>API: SVG bytes → rasterized PNG
+    Note over API: render_joe() + render_sam()
+    Note over API: cache.store(joe_png, sam_png)
+
+    Pi->>API: GET /dashboard/joe.png
+    API-->>Pi: 800×480 PNG (cached bytes)
+    Note over Pi: dailyClear.py → dailyEink.py
+      </div>
     </section>
 
   </main>
