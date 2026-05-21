@@ -89,6 +89,72 @@
     </section>
 
     <section id="architecture" hidden>
+      <h1>Architecture</h1>
+      <p class="text-slate-500 text-sm mb-6">System topology, request flow, and hourly refresh cycle.</p>
+
+      <h2>System Topology</h2>
+      <div class="bg-white border border-slate-200 rounded-lg p-6 mb-2">
+        <div class="mermaid">
+graph TB
+    subgraph Pi["Raspberry Pi"]
+        cron["Cron :30 · dailyDash.sh"]
+        display["dailyEink.py · dailyClear.py"]
+    end
+    subgraph NAS["Synology NAS — Docker :8000"]
+        fastapi["FastAPI · app/main.py"]
+        cache["DashboardCache\n(in-memory PNG bytes)"]
+        sched["APScheduler\nCronTrigger(minute=0)"]
+    end
+    subgraph External["External APIs"]
+        noaa["NOAA · api.weather.gov"]
+        zenq["ZenQuotes · zenquotes.io"]
+        basm["Basmilius Icons\nraw.githubusercontent.com"]
+    end
+    cron -->|"GET /dashboard/joe.png"| fastapi
+    fastapi -->|"PNG bytes"| cron
+    cron --> display
+    sched -->|"fetch_weather()"| noaa
+    sched -->|"fetch_quote()"| zenq
+    sched -->|"rasterize_svg()"| basm
+    sched -->|"store(bytes)"| cache
+    fastapi -->|"get_joe() / get_sam()"| cache
+        </div>
+      </div>
+      <p class="text-xs text-slate-400 text-center mb-8">Pi polls at :30; NAS refreshes at :00. Pi-side display scripts are never modified.</p>
+
+      <h2>Request Flow</h2>
+      <div class="bg-white border border-slate-200 rounded-lg p-6 mb-2">
+        <div class="mermaid">
+sequenceDiagram
+    participant Pi as Raspberry Pi
+    participant App as FastAPI (app/main.py)
+    participant C as DashboardCache
+    Pi->>App: GET /dashboard/joe.png
+    App->>C: cache.get_joe()
+    C-->>App: PNG bytes (or fallback 800x480)
+    App-->>Pi: 200 image/png
+        </div>
+      </div>
+      <p class="text-xs text-slate-400 text-center mb-8">No computation on request — the cache always has bytes ready. Fallback PNG served only on first boot before the initial refresh completes.</p>
+
+      <h2>Refresh Cycle</h2>
+      <div class="bg-white border border-slate-200 rounded-lg p-6 mb-2">
+        <div class="mermaid">
+graph LR
+    trigger["CronTrigger(minute=0)\nor app startup"]
+    trigger --> icons["load_all_icons(size=120)\nfetch + rasterize all SVGs"]
+    trigger --> weather["fetch_weather(noaa_grid)"]
+    trigger --> quote["fetch_quote()"]
+    icons --> render
+    weather --> render
+    quote --> render
+    render["render_joe(weather, quote, icons) → bytes\nrender_sam(weather, quote, icons) → bytes"]
+    render --> store["cache.store(joe, sam,\nnoaa_ok, quotes_ok)"]
+    weather -->|"raises"| fail["noaa_ok=False\nkeep previous PNG"]
+    quote -->|"raises"| fail2["quotes_ok=False\nkeep previous PNG"]
+        </div>
+      </div>
+      <p class="text-xs text-slate-400 text-center mb-8">Icons are re-fetched on every refresh. If either API fails, the previous cached PNG is preserved.</p>
     </section>
 
     <section id="modules" hidden>
