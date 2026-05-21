@@ -489,6 +489,44 @@ graph LR
     </section>
 
     <section id="configuration" hidden>
+      <h1>Configuration</h1>
+
+      <h2>Environment Variables</h2>
+      <p class="text-sm text-slate-600 mb-3">Defined in <code>app/config.py</code> via <code>pydantic-settings</code>. Values can be set via environment variables or an optional <code>.env</code> file in the project root. The module-level <code>settings</code> singleton is imported by <code>main.py</code> and <code>scheduler.py</code>.</p>
+      <table>
+        <thead><tr><th>Variable</th><th>Default</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td><code>PORT</code></td><td><code>8000</code></td><td>uvicorn listen port</td></tr>
+          <tr><td><code>NOAA_GRID</code></td><td><code>PSR/166,61</code></td><td>NOAA gridpoint identifier for Phoenix area weather forecasts</td></tr>
+          <tr><td><code>REFRESH_HOUR_INTERVAL</code></td><td><code>1</code></td><td>APScheduler interval in hours between dashboard refreshes</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Python Environment</h2>
+      <div class="card mt-4">
+        <p class="text-sm text-slate-700 mb-2"><strong>Always use <code>venv/bin/python</code> (Python 3.12 via Homebrew).</strong> The system Python 3.9 cannot load <code>cairosvg</code> because cairocffi cannot find libcairo on macOS without the venv.</p>
+        <pre><code># Activate the project venv
+source eink-dashboard/venv/bin/activate
+
+# Or call directly
+eink-dashboard/venv/bin/python -m pytest tests/
+eink-dashboard/venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000</code></pre>
+      </div>
+
+      <h2>Fonts</h2>
+      <p class="text-sm text-slate-600 mb-3">Inter Regular and Bold are bundled at <code>assets/fonts/</code>. No external font fetches at runtime — both renderers load from that directory via <code>os.path</code> relative to their module.</p>
+      <table>
+        <thead><tr><th>File</th><th>Used for</th></tr></thead>
+        <tbody>
+          <tr><td><code>assets/fonts/Inter-Regular.ttf</code></td><td>Body text, labels, forecast, author attribution</td></tr>
+          <tr><td><code>assets/fonts/Inter-Bold.ttf</code></td><td>Section labels, temperature display, header title</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Synology Deployment</h2>
+      <div class="card">
+        <p class="text-sm text-slate-700">The <code>synology/</code> directory inside <code>eink-dashboard/</code> contains a parallel copy of the app tuned for the Synology NAS environment. Environment variables (<code>NOAA_GRID</code>, <code>PORT</code>) are set directly in its <code>docker-compose.yml</code>. No <code>.env</code> file is needed on the NAS.</p>
+      </div>
     </section>
 
     <section id="deployment" hidden>
