@@ -1,0 +1,988 @@
+# E-Ink Dashboard Documentation Implementation Plan
+
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+
+**Goal:** Build a single self-contained HTML architecture reference at `docs/index.html` matching the K&R Feeds doc style.
+
+**Architecture:** Single HTML file using Tailwind CSS (CDN) and Mermaid (CDN). Fixed sidebar with 8 section buttons; sections show/hide via JS `hidden` attribute toggle. No build step, no dependencies to install.
+
+**Tech Stack:** HTML · Tailwind CSS (CDN) · Mermaid v10 (CDN) · Vanilla JS
+
+---
+
+## File Map
+
+```
+docs/
+└── index.html    ← create: single self-contained architecture reference doc
+```
+
+No existing files are modified.
+
+---
+
+## Task 1: HTML Scaffold
+
+**Files:**
+- Create: `docs/index.html`
+
+- [ ] **Step 1: Create `docs/index.html`**
+
+Create `docs/index.html` with this exact content:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>E-Ink Dashboard — Architecture Docs</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    .sidebar-item {
+      display: block; width: 100%; text-align: left;
+      padding: 6px 16px; font-size: 13px; color: #475569;
+      border-radius: 4px; cursor: pointer; background: none; border: none;
+    }
+    .sidebar-item:hover { background: #f1f5f9; }
+    .sidebar-item.active { background: #EBF3FF; color: #4A9EFF; font-weight: 600; }
+    table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+    th { background: #F8FAFF; text-align: left; padding: 8px 12px; font-size: 12px;
+         font-weight: 600; color: #64748B; border-bottom: 1px solid #E2E8F0; }
+    td { padding: 8px 12px; font-size: 13px; border-bottom: 1px solid #F1F5F9; vertical-align: top; }
+    code { background: #F1F5F9; color: #334155; padding: 1px 5px;
+           border-radius: 4px; font-size: 12px; font-family: ui-monospace, monospace; }
+    pre { background: #0F172A; color: #E2E8F0; padding: 16px; border-radius: 8px;
+          overflow-x: auto; font-size: 12px; line-height: 1.6; margin: 12px 0; }
+    pre code { background: none; color: inherit; padding: 0; }
+    .mermaid { display: flex; justify-content: center; }
+    h1 { font-size: 1.5rem; font-weight: 700; color: #090E1C; margin-bottom: 4px; }
+    h2 { font-size: 1rem; font-weight: 600; color: #090E1C; margin-top: 24px; margin-bottom: 10px; }
+    h3 { font-size: 0.875rem; font-weight: 600; color: #090E1C; margin-top: 18px; margin-bottom: 6px; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+<nav class="fixed top-0 left-0 right-0 h-12 bg-white border-b border-slate-200 flex items-center px-6 z-20">
+  <span class="font-bold text-sm tracking-wide">
+    <span style="color:#4A9EFF">E-Ink</span>
+    <span class="text-slate-600 ml-1">Dashboard — Architecture Docs</span>
+  </span>
+</nav>
+
+<div class="flex" style="padding-top:48px; height:calc(100vh - 48px);">
+
+  <aside class="flex-shrink-0 bg-white border-r border-slate-200 overflow-y-auto py-4" style="width:160px;">
+    <button class="sidebar-item active" data-section="overview">Overview</button>
+    <button class="sidebar-item" data-section="architecture">Architecture</button>
+    <hr class="my-2 border-slate-100 mx-3">
+    <button class="sidebar-item" data-section="modules">Modules</button>
+    <button class="sidebar-item" data-section="endpoints">API Endpoints</button>
+    <hr class="my-2 border-slate-100 mx-3">
+    <button class="sidebar-item" data-section="datasources">Data Sources</button>
+    <button class="sidebar-item" data-section="profiles">Display Profiles</button>
+    <hr class="my-2 border-slate-100 mx-3">
+    <button class="sidebar-item" data-section="configuration">Configuration</button>
+    <button class="sidebar-item" data-section="deployment">Deployment</button>
+  </aside>
+
+  <main class="flex-1 overflow-y-auto px-12 py-10" style="max-width:820px;">
+
+    <section id="overview">
+    </section>
+
+    <section id="architecture" hidden>
+    </section>
+
+    <section id="modules" hidden>
+    </section>
+
+    <section id="endpoints" hidden>
+    </section>
+
+    <section id="datasources" hidden>
+    </section>
+
+    <section id="profiles" hidden>
+    </section>
+
+    <section id="configuration" hidden>
+    </section>
+
+    <section id="deployment" hidden>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  mermaid.initialize({ startOnLoad: false, theme: 'neutral' });
+
+  const sections = document.querySelectorAll('main section');
+  const buttons  = document.querySelectorAll('.sidebar-item');
+
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.section;
+      sections.forEach(s => { s.hidden = (s.id !== id); });
+      buttons.forEach(b => b.classList.toggle('active', b === btn));
+      if (id === 'architecture' || id === 'deployment') {
+        const nodes = [...document.querySelectorAll(`#${id} .mermaid`)]
+          .filter(el => !el.getAttribute('data-processed'));
+        if (nodes.length) mermaid.run({ nodes });
+      }
+    });
+  });
+</script>
+</body>
+</html>
+```
+
+- [ ] **Step 2: Verify the scaffold**
+
+```bash
+open docs/index.html
+```
+
+Expected: page loads with blue "E-Ink Dashboard — Architecture Docs" navbar, sidebar showing 8 items with "Overview" highlighted in blue, empty main area.
+
+- [ ] **Step 3: Commit**
+
+```bash
+git add docs/index.html
+git commit -m "docs: scaffold E-Ink Dashboard architecture reference HTML"
+```
+
+---
+
+## Task 2: Overview Section
+
+**Files:**
+- Modify: `docs/index.html`
+
+- [ ] **Step 1: Replace the empty overview section**
+
+In `docs/index.html`, replace:
+```
+    <section id="overview">
+    </section>
+```
+
+With:
+```html
+    <section id="overview">
+      <h1>E-Ink Dashboard</h1>
+      <p class="text-slate-500 text-sm mb-6">FastAPI + Pillow dashboard image server — architecture reference</p>
+
+      <div class="grid grid-cols-2 gap-3 mb-8">
+        <div class="bg-white border border-slate-200 rounded-lg p-4">
+          <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Platform</div>
+          <div class="text-sm text-slate-700">Python 3.12 · FastAPI · Pillow · APScheduler · Docker</div>
+        </div>
+        <div class="bg-white border border-slate-200 rounded-lg p-4">
+          <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Entry Point</div>
+          <div class="text-sm text-slate-700"><code>app/main.py</code> — FastAPI lifespan triggers initial <code>refresh_dashboard()</code> then starts APScheduler</div>
+        </div>
+        <div class="bg-white border border-slate-200 rounded-lg p-4">
+          <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Displays</div>
+          <div class="text-sm text-slate-700">Joe 800×480 (dark, weather left · quote right) · Sam 600×400 (dark, quote left · weather right)</div>
+        </div>
+        <div class="bg-white border border-slate-200 rounded-lg p-4">
+          <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Data Sources</div>
+          <div class="text-sm text-slate-700">NOAA Weather API · ZenQuotes · Basmilius SVG icons (rasterized each refresh)</div>
+        </div>
+      </div>
+
+      <h2>Key Design Principles</h2>
+      <ul class="space-y-2 text-sm text-slate-600">
+        <li>• <strong>In-memory cache only</strong> — PNG bytes stored in <code>DashboardCache</code>; no disk I/O on <code>GET /dashboard/*.png</code> requests.</li>
+        <li>• <strong>Hourly refresh at :00</strong> — APScheduler <code>CronTrigger(minute=0)</code> fetches weather + quote + icons, renders both PNGs, stores in cache. Also runs immediately on startup.</li>
+        <li>• <strong>Pi-side scripts unchanged</strong> — <code>dailyEink.py</code> and <code>dailyClear.py</code> unmodified. Only <code>dailyDash.sh</code> changed: a single <code>curl</code> replaces the old Firefox screenshot pipeline.</li>
+        <li>• <strong>Failure isolation</strong> — if NOAA or ZenQuotes fails at refresh, the previous cached PNG is kept and status flags are updated. On first-boot failure, a plain fallback "Dashboard starting…" PNG is served.</li>
+        <li>• <strong>Dark palette, native e-ink colors</strong> — black background with condition-matched accent colors drawn from the Inky Impression 7-color native palette to avoid dithering artifacts.</li>
+      </ul>
+    </section>
+```
+
+- [ ] **Step 2: Verify**
+
+```bash
+open docs/index.html
+```
+
+Expected: Overview shows "E-Ink Dashboard" h1, 4 summary cards in a 2×2 grid, bulleted design principles list.
+
+- [ ] **Step 3: Commit**
+
+```bash
+git add docs/index.html
+git commit -m "docs: add Overview section"
+```
+
+---
+
+## Task 3: Architecture Section
+
+**Files:**
+- Modify: `docs/index.html`
+
+- [ ] **Step 1: Replace the empty architecture section**
+
+In `docs/index.html`, replace:
+```
+    <section id="architecture" hidden>
+    </section>
+```
+
+With:
+```html
+    <section id="architecture" hidden>
+      <h1>Architecture</h1>
+      <p class="text-slate-500 text-sm mb-6">System topology, request flow, and hourly refresh cycle.</p>
+
+      <h2>System Topology</h2>
+      <div class="bg-white border border-slate-200 rounded-lg p-6 mb-2">
+        <div class="mermaid">
+graph TB
+    subgraph Pi["Raspberry Pi"]
+        cron["Cron :30 · dailyDash.sh"]
+        display["dailyEink.py · dailyClear.py"]
+    end
+    subgraph NAS["Synology NAS — Docker :8000"]
+        fastapi["FastAPI · app/main.py"]
+        cache["DashboardCache\n(in-memory PNG bytes)"]
+        sched["APScheduler\nCronTrigger(minute=0)"]
+    end
+    subgraph External["External APIs"]
+        noaa["NOAA · api.weather.gov"]
+        zenq["ZenQuotes · zenquotes.io"]
+        basm["Basmilius Icons\nraw.githubusercontent.com"]
+    end
+    cron -->|"GET /dashboard/joe.png"| fastapi
+    fastapi -->|"PNG bytes"| cron
+    cron --> display
+    sched -->|"fetch_weather()"| noaa
+    sched -->|"fetch_quote()"| zenq
+    sched -->|"rasterize_svg()"| basm
+    sched -->|"store(bytes)"| cache
+    fastapi -->|"get_joe() / get_sam()"| cache
+        </div>
+      </div>
+      <p class="text-xs text-slate-400 text-center mb-8">Pi polls at :30; NAS refreshes at :00. Pi-side display scripts are never modified.</p>
+
+      <h2>Request Flow</h2>
+      <div class="bg-white border border-slate-200 rounded-lg p-6 mb-2">
+        <div class="mermaid">
+sequenceDiagram
+    participant Pi as Raspberry Pi
+    participant App as FastAPI (app/main.py)
+    participant C as DashboardCache
+    Pi->>App: GET /dashboard/joe.png
+    App->>C: cache.get_joe()
+    C-->>App: PNG bytes (or fallback 800x480)
+    App-->>Pi: 200 image/png
+        </div>
+      </div>
+      <p class="text-xs text-slate-400 text-center mb-8">No computation on request — the cache always has bytes ready. Fallback PNG served only on first boot before the initial refresh completes.</p>
+
+      <h2>Refresh Cycle</h2>
+      <div class="bg-white border border-slate-200 rounded-lg p-6 mb-2">
+        <div class="mermaid">
+graph LR
+    trigger["CronTrigger(minute=0)\nor app startup"]
+    trigger --> icons["load_all_icons(size=120)\nfetch + rasterize all SVGs"]
+    trigger --> weather["fetch_weather(noaa_grid)"]
+    trigger --> quote["fetch_quote()"]
+    icons --> render
+    weather --> render
+    quote --> render
+    render["render_joe(weather, quote, icons) → bytes\nrender_sam(weather, quote, icons) → bytes"]
+    render --> store["cache.store(joe, sam,\nnoaa_ok, quotes_ok)"]
+    weather -->|"raises"| fail["noaa_ok=False\nkeep previous PNG"]
+    quote -->|"raises"| fail2["quotes_ok=False\nkeep previous PNG"]
+        </div>
+      </div>
+      <p class="text-xs text-slate-400 text-center mb-8">Icons are re-fetched on every refresh. If either API fails, the previous cached PNG is preserved.</p>
+    </section>
+```
+
+- [ ] **Step 2: Verify**
+
+```bash
+open docs/index.html
+```
+
+Click "Architecture". Expected: 3 Mermaid diagrams render — system topology flowchart, request sequence diagram, and refresh cycle flowchart. Each has a caption below it.
+
+- [ ] **Step 3: Commit**
+
+```bash
+git add docs/index.html
+git commit -m "docs: add Architecture section with Mermaid diagrams"
+```
+
+---
+
+## Task 4: Modules Section
+
+**Files:**
+- Modify: `docs/index.html`
+
+- [ ] **Step 1: Replace the empty modules section**
+
+In `docs/index.html`, replace:
+```
+    <section id="modules" hidden>
+    </section>
+```
+
+With:
+```html
+    <section id="modules" hidden>
+      <h1>Modules</h1>
+      <p class="text-slate-500 text-sm mb-6">All source files live in <code>eink-dashboard/app/</code>.</p>
+
+      <h2>app/main.py</h2>
+      <p class="text-sm text-slate-600 mb-3">FastAPI application, lifespan handler, and the three route functions.</p>
+      <table>
+        <thead><tr><th>Symbol</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>lifespan(app)</code></td><td>Async context manager. On enter: <code>await refresh_dashboard()</code> then <code>start_scheduler()</code>. On exit: <code>scheduler.shutdown(wait=False)</code>.</td></tr>
+          <tr><td><code>joe_png()</code></td><td><code>GET /dashboard/joe.png</code> → <code>Response(cache.get_joe(), "image/png")</code></td></tr>
+          <tr><td><code>sam_png()</code></td><td><code>GET /dashboard/sam.png</code> → <code>Response(cache.get_sam(), "image/png")</code></td></tr>
+          <tr><td><code>health()</code></td><td><code>GET /health</code> → JSON with <code>last_refresh</code> (ISO-8601 or null), <code>noaa_ok</code>, <code>quotes_ok</code>.</td></tr>
+        </tbody>
+      </table>
+
+      <h2>app/config.py</h2>
+      <p class="text-sm text-slate-600 mb-3">Pydantic-settings configuration. Reads from environment variables and an optional <code>.env</code> file. Module-level <code>settings</code> singleton imported by <code>main.py</code> and <code>scheduler.py</code>.</p>
+      <table>
+        <thead><tr><th>Field</th><th>Type</th><th>Default</th></tr></thead>
+        <tbody>
+          <tr><td><code>port</code></td><td>int</td><td>8000</td></tr>
+          <tr><td><code>noaa_grid</code></td><td>str</td><td>"PSR/166,61"</td></tr>
+          <tr><td><code>refresh_hour_interval</code></td><td>int</td><td>1</td></tr>
+        </tbody>
+      </table>
+
+      <h2>app/cache.py</h2>
+      <p class="text-sm text-slate-600 mb-3">In-memory PNG storage. The module-level <code>cache</code> singleton is shared by <code>main.py</code> (reads) and <code>scheduler.py</code> (writes).</p>
+      <table>
+        <thead><tr><th>Symbol</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>DashboardCache</code></td><td>Dataclass: <code>joe_png: bytes|None</code>, <code>sam_png: bytes|None</code>, <code>last_refresh: datetime|None</code>, <code>noaa_ok: bool</code>, <code>quotes_ok: bool</code>.</td></tr>
+          <tr><td><code>.store(joe, sam, *, noaa_ok, quotes_ok)</code></td><td>Stores PNG bytes and sets <code>last_refresh = datetime.now()</code>.</td></tr>
+          <tr><td><code>.get_joe()</code> / <code>.get_sam()</code></td><td>Returns stored bytes, or a plain fallback PNG ("Dashboard starting…") if not yet populated.</td></tr>
+          <tr><td><code>cache</code></td><td>Module-level singleton — the single shared <code>DashboardCache</code> instance.</td></tr>
+        </tbody>
+      </table>
+
+      <h2>app/weather.py</h2>
+      <p class="text-sm text-slate-600 mb-3">NOAA Weather API client. Raises <code>httpx.HTTPStatusError</code> on non-2xx — the scheduler catches this and keeps the previous cache.</p>
+      <table>
+        <thead><tr><th>Symbol</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>WeatherData</code></td><td>Dataclass: <code>period_name</code>, <code>temperature</code>, <code>short_forecast</code>, <code>detailed_forecast</code>, <code>precip_percent</code>.</td></tr>
+          <tr><td><code>fetch_weather(grid: str)</code></td><td>Async. Fetches <code>https://api.weather.gov/gridpoints/{grid}/forecast</code>. Returns <code>WeatherData</code> from <code>periods[0]</code>. Raises <code>HTTPStatusError</code> on failure.</td></tr>
+        </tbody>
+      </table>
+
+      <h2>app/quotes.py</h2>
+      <p class="text-sm text-slate-600 mb-3">ZenQuotes API client. Same error contract as the weather client.</p>
+      <table>
+        <thead><tr><th>Symbol</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>QuoteData</code></td><td>Dataclass: <code>text</code>, <code>author</code>.</td></tr>
+          <tr><td><code>fetch_quote()</code></td><td>Async. Fetches <code>https://zenquotes.io/api/random</code>. Returns <code>QuoteData</code>. Raises <code>HTTPStatusError</code> on failure.</td></tr>
+        </tbody>
+      </table>
+
+      <h2>app/icons.py</h2>
+      <p class="text-sm text-slate-600 mb-3">Weather icon mapping and SVG rasterization. <strong>Multi-word keywords must precede their single-word components</strong> in <code>ICON_MAPPING</code> — first-match-wins means <code>"mostly sunny"</code> must appear before <code>"sunny"</code>.</p>
+      <table>
+        <thead><tr><th>Symbol</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>ICON_MAPPING</code></td><td><code>list[tuple[list[str], str, str]]</code> — 18 condition groups of <code>(keywords, day_icon_name, night_icon_name)</code>.</td></tr>
+          <tr><td><code>select_icon_name(short_forecast, period_name)</code></td><td>Case-insensitive substring match. Night if <code>period_name.lower()</code> is <code>"tonight"</code> or <code>"overnight"</code>. Fallback: <code>"clear-day"</code> / <code>"clear-night"</code>.</td></tr>
+          <tr><td><code>rasterize_svg(name, size)</code></td><td>Synchronous. Fetches <code>{BASE_URL}{name}.svg</code> via <code>httpx.Client</code>, converts via <code>cairosvg.svg2png()</code>, returns RGBA <code>Image</code>.</td></tr>
+          <tr><td><code>load_all_icons(size=120)</code></td><td>Synchronous. Rasterizes every unique icon name in <code>ICON_MAPPING</code>. On per-icon failure: gray placeholder. Returns <code>dict[str, Image]</code>.</td></tr>
+        </tbody>
+      </table>
+
+      <h2>app/accent.py</h2>
+      <p class="text-sm text-slate-600 mb-3">Condition-to-color mapping for dark mode. Same first-match-wins pattern as <code>icons.py</code>. Colors drawn from the Inky Impression 7-color native palette to avoid dithering.</p>
+      <table>
+        <thead><tr><th>Symbol</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>select_accent(short_forecast: str)</code></td><td>Returns <code>(temp_color, icon_bg_color)</code> as hex strings. Fallback: <code>("#ffe900", "#ffe900")</code>.</td></tr>
+        </tbody>
+      </table>
+
+      <h2>app/draw_utils.py</h2>
+      <p class="text-sm text-slate-600 mb-3">Shared Pillow text utility used by both renderers.</p>
+      <table>
+        <thead><tr><th>Symbol</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>wrap_text(draw, text, font, max_width)</code></td><td>Splits <code>text</code> into <code>list[str]</code> where each line fits within <code>max_width</code> px via <code>draw.textlength()</code>. A word wider than <code>max_width</code> appears alone on its line.</td></tr>
+        </tbody>
+      </table>
+
+      <h2>app/render_joe.py</h2>
+      <p class="text-sm text-slate-600 mb-3">800×480 dark-mode renderer for Joe's Pimoroni Inky Impression display. Calls <code>select_accent()</code> and <code>select_icon_name()</code> internally.</p>
+      <table>
+        <thead><tr><th>Symbol</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>render_joe(weather, quote, icons)</code></td><td>Returns <code>bytes</code> (PNG). Layout: header bar (title left, date right) → vertical divider → weather panel left (icon circle + 80px temp + subtitle + forecast box) · quote panel right (label + wrapped quote + right-aligned author).</td></tr>
+        </tbody>
+      </table>
+
+      <h2>app/render_sam.py</h2>
+      <p class="text-sm text-slate-600 mb-3">600×400 dark-mode renderer for Sam's display. Same color constants and font helper as <code>render_joe.py</code>, mirrored layout.</p>
+      <table>
+        <thead><tr><th>Symbol</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>render_sam(weather, quote, icons)</code></td><td>Returns <code>bytes</code> (PNG). Layout: header bar → vertical divider → quote panel left · weather panel right (icon circle + 52px temp + condition + forecast box).</td></tr>
+        </tbody>
+      </table>
+
+      <h2>app/scheduler.py</h2>
+      <p class="text-sm text-slate-600 mb-3">APScheduler setup and the refresh coroutine. The module-level <code>scheduler</code> is started in <code>main.py</code>'s lifespan and shut down on exit.</p>
+      <table>
+        <thead><tr><th>Symbol</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>scheduler</code></td><td>Module-level <code>AsyncIOScheduler</code> instance.</td></tr>
+          <tr><td><code>refresh_dashboard(cache, noaa_grid)</code></td><td>Async. Calls <code>load_all_icons()</code>, then <code>fetch_weather()</code> and <code>fetch_quote()</code>. If either raises, updates status flags and returns without touching cached PNGs. On success: <code>render_joe()</code> + <code>render_sam()</code> + <code>cache.store()</code>.</td></tr>
+          <tr><td><code>start_scheduler(noaa_grid)</code></td><td>Adds <code>refresh_dashboard</code> as a <code>CronTrigger(minute=0)</code> job and calls <code>scheduler.start()</code>.</td></tr>
+        </tbody>
+      </table>
+    </section>
+```
+
+- [ ] **Step 2: Verify**
+
+```bash
+open docs/index.html
+```
+
+Click "Modules". Expected: 11 module subsections each with a description and a symbol table. Confirm `render_joe` shows `→ bytes` return type and `icons: dict` parameter.
+
+- [ ] **Step 3: Commit**
+
+```bash
+git add docs/index.html
+git commit -m "docs: add Modules section"
+```
+
+---
+
+## Task 5: API Endpoints Section
+
+**Files:**
+- Modify: `docs/index.html`
+
+- [ ] **Step 1: Replace the empty endpoints section**
+
+In `docs/index.html`, replace:
+```
+    <section id="endpoints" hidden>
+    </section>
+```
+
+With:
+```html
+    <section id="endpoints" hidden>
+      <h1>API Endpoints</h1>
+      <p class="text-slate-500 text-sm mb-6">The FastAPI server exposes three endpoints on port 8000.</p>
+
+      <table>
+        <thead><tr><th>Method</th><th>Path</th><th>Response Type</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code>GET</code></td><td><code>/dashboard/joe.png</code></td><td><code>image/png</code></td>
+            <td>800×480 Joe profile. Returns cached bytes; no render on request.</td>
+          </tr>
+          <tr>
+            <td><code>GET</code></td><td><code>/dashboard/sam.png</code></td><td><code>image/png</code></td>
+            <td>600×400 Sam profile. Returns cached bytes; no render on request.</td>
+          </tr>
+          <tr>
+            <td><code>GET</code></td><td><code>/health</code></td><td><code>application/json</code></td>
+            <td>Last refresh timestamp and per-API status flags.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>/health Response</h2>
+      <pre><code>{
+  "last_refresh": "2026-05-21T07:00:03.142857",  // ISO-8601, or null on first boot
+  "noaa_ok": true,                                // false if last NOAA fetch raised
+  "quotes_ok": true                               // false if last ZenQuotes fetch raised
+}</code></pre>
+      <p class="text-sm text-slate-600 mt-3"><code>last_refresh</code> is set by <code>cache.store()</code> via <code>datetime.now()</code>. A failed refresh that keeps the previous cache does <em>not</em> update <code>last_refresh</code>.</p>
+
+      <h2>Error Behavior</h2>
+      <table>
+        <thead><tr><th>Scenario</th><th>Behavior</th></tr></thead>
+        <tbody>
+          <tr><td>NOAA down at refresh</td><td>Keep previous PNGs. Set <code>noaa_ok = False</code>. Log warning.</td></tr>
+          <tr><td>ZenQuotes down at refresh</td><td>Keep previous PNGs. Set <code>quotes_ok = False</code>. Log warning.</td></tr>
+          <tr><td>Both APIs down on first boot</td><td><code>get_joe()</code> / <code>get_sam()</code> return a plain "Dashboard starting…" fallback PNG.</td></tr>
+          <tr><td>Pi curl fails</td><td><code>dailyDash.sh</code> exits early; display is not cleared or updated.</td></tr>
+        </tbody>
+      </table>
+    </section>
+```
+
+- [ ] **Step 2: Verify**
+
+```bash
+open docs/index.html
+```
+
+Click "API Endpoints". Expected: 3-row endpoints table, `/health` JSON in dark code block, 4-row error behavior table.
+
+- [ ] **Step 3: Commit**
+
+```bash
+git add docs/index.html
+git commit -m "docs: add API Endpoints section"
+```
+
+---
+
+## Task 6: Data Sources Section
+
+**Files:**
+- Modify: `docs/index.html`
+
+- [ ] **Step 1: Replace the empty datasources section**
+
+In `docs/index.html`, replace:
+```
+    <section id="datasources" hidden>
+    </section>
+```
+
+With:
+```html
+    <section id="datasources" hidden>
+      <h1>Data Sources</h1>
+      <p class="text-slate-500 text-sm mb-6">All three data sources are fetched on every hourly refresh.</p>
+
+      <h2>NOAA Weather API</h2>
+      <div class="bg-white border border-slate-200 rounded-lg p-5 mb-4">
+        <table>
+          <tbody>
+            <tr><td class="font-medium w-36">Endpoint</td><td><code>https://api.weather.gov/gridpoints/{NOAA_GRID}/forecast</code></td></tr>
+            <tr><td class="font-medium">Default grid</td><td><code>PSR/166,61</code> (Phoenix, AZ area)</td></tr>
+            <tr><td class="font-medium">Fields used</td><td><code>periods[0].name</code>, <code>.temperature</code>, <code>.shortForecast</code>, <code>.detailedForecast</code>, <code>.probabilityOfPrecipitation.value</code></td></tr>
+            <tr><td class="font-medium">Auth</td><td>None — public API. <code>User-Agent: InkyDashboard/1.0</code> header sent per NOAA requirements.</td></tr>
+            <tr><td class="font-medium">On failure</td><td>Raises <code>httpx.HTTPStatusError</code>. Scheduler catches, keeps previous cache, sets <code>cache.noaa_ok = False</code>.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>ZenQuotes</h2>
+      <div class="bg-white border border-slate-200 rounded-lg p-5 mb-4">
+        <table>
+          <tbody>
+            <tr><td class="font-medium w-36">Endpoint</td><td><code>https://zenquotes.io/api/random</code></td></tr>
+            <tr><td class="font-medium">Fields used</td><td><code>[0].q</code> (quote text) · <code>[0].a</code> (author)</td></tr>
+            <tr><td class="font-medium">Auth</td><td>None — free unauthenticated tier.</td></tr>
+            <tr><td class="font-medium">On failure</td><td>Raises <code>httpx.HTTPStatusError</code>. Scheduler catches, keeps previous cache, sets <code>cache.quotes_ok = False</code>.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Basmilius Weather Icons</h2>
+      <div class="bg-white border border-slate-200 rounded-lg p-5 mb-4">
+        <p class="text-sm text-slate-600 mb-3">Open-source SVG icon set (MIT license). Fetched from GitHub raw content and rasterized via <code>cairosvg</code> to RGBA PNG at 120 px. On per-icon failure, a gray placeholder is used — the refresh continues.</p>
+        <table>
+          <tbody>
+            <tr><td class="font-medium w-36">Base URL</td><td><code>https://raw.githubusercontent.com/basmilius/weather-icons/dev/production/fill/svg/</code></td></tr>
+            <tr><td class="font-medium">Fetch timing</td><td>Every refresh via <code>load_all_icons(size=120)</code> — synchronous, blocks the event loop during startup.</td></tr>
+            <tr><td class="font-medium">On failure</td><td>Per-icon gray 120×120 RGBA placeholder. Does not abort the refresh.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Icon Mapping — <code>ICON_MAPPING</code> in app/icons.py</h3>
+      <p class="text-sm text-slate-600 mb-2">First-match-wins, case-insensitive substring match against NOAA <code>shortForecast</code>. Night icons when <code>period_name</code> is "Tonight" or "Overnight".</p>
+      <table>
+        <thead><tr><th>Keywords (any substring match)</th><th>Day Icon</th><th>Night Icon</th></tr></thead>
+        <tbody>
+          <tr><td><code>mostly sunny</code>, <code>mostly clear</code></td><td><code>partly-cloudy-day</code></td><td><code>partly-cloudy-night</code></td></tr>
+          <tr><td><code>partly cloudy</code>, <code>partly sunny</code></td><td><code>partly-cloudy-day</code></td><td><code>partly-cloudy-night</code></td></tr>
+          <tr><td><code>mostly cloudy</code></td><td><code>overcast-day</code></td><td><code>overcast-night</code></td></tr>
+          <tr><td><code>sunny</code>, <code>clear</code>, <code>hot</code></td><td><code>clear-day</code></td><td><code>clear-night</code></td></tr>
+          <tr><td><code>cloudy</code>, <code>overcast</code></td><td><code>cloudy</code></td><td><code>cloudy</code></td></tr>
+          <tr><td><code>freezing drizzle</code>, <code>drizzle</code></td><td><code>partly-cloudy-day-drizzle</code></td><td><code>partly-cloudy-night-drizzle</code></td></tr>
+          <tr><td><code>showers</code>, <code>chance rain</code></td><td><code>partly-cloudy-day-rain</code></td><td><code>partly-cloudy-night-rain</code></td></tr>
+          <tr><td><code>heavy rain</code>, <code>flood</code></td><td><code>extreme-day-rain</code></td><td><code>extreme-night-rain</code></td></tr>
+          <tr><td><code>sleet</code>, <code>freezing rain</code>, <code>wintry mix</code></td><td><code>overcast-day-sleet</code></td><td><code>overcast-night-sleet</code></td></tr>
+          <tr><td><code>rain</code></td><td><code>overcast-day-rain</code></td><td><code>overcast-night-rain</code></td></tr>
+          <tr><td><code>blizzard</code>, <code>heavy snow</code></td><td><code>extreme-day-snow</code></td><td><code>extreme-night-snow</code></td></tr>
+          <tr><td><code>flurries</code>, <code>chance snow</code></td><td><code>partly-cloudy-day-snow</code></td><td><code>partly-cloudy-night-snow</code></td></tr>
+          <tr><td><code>snow</code></td><td><code>overcast-day-snow</code></td><td><code>overcast-night-snow</code></td></tr>
+          <tr><td><code>thunder</code>, <code>storm</code></td><td><code>thunderstorms-day</code></td><td><code>thunderstorms-night</code></td></tr>
+          <tr><td><code>tornado</code>, <code>hurricane</code>, <code>tropical</code></td><td><code>tornado</code></td><td><code>hurricane</code></td></tr>
+          <tr><td><code>fog</code>, <code>mist</code></td><td><code>fog-day</code></td><td><code>fog-night</code></td></tr>
+          <tr><td><code>haze</code>, <code>smoke</code>, <code>dust</code>, <code>sand</code></td><td><code>haze-day</code></td><td><code>haze-night</code></td></tr>
+          <tr><td><code>wind</code>, <code>breezy</code>, <code>blustery</code></td><td><code>wind</code></td><td><code>wind</code></td></tr>
+          <tr><td><em>fallback</em></td><td><code>clear-day</code></td><td><code>clear-night</code></td></tr>
+        </tbody>
+      </table>
+    </section>
+```
+
+- [ ] **Step 2: Verify**
+
+```bash
+open docs/index.html
+```
+
+Click "Data Sources". Expected: 3 cards (NOAA, ZenQuotes, Basmilius), then a 19-row icon mapping table (18 conditions + fallback row).
+
+- [ ] **Step 3: Commit**
+
+```bash
+git add docs/index.html
+git commit -m "docs: add Data Sources section with icon mapping table"
+```
+
+---
+
+## Task 7: Display Profiles Section
+
+**Files:**
+- Modify: `docs/index.html`
+
+- [ ] **Step 1: Replace the empty profiles section**
+
+In `docs/index.html`, replace:
+```
+    <section id="profiles" hidden>
+    </section>
+```
+
+With:
+```html
+    <section id="profiles" hidden>
+      <h1>Display Profiles</h1>
+      <p class="text-slate-500 text-sm mb-6">Two profiles share the same data but differ in dimensions and layout. Both use the dark palette with condition-matched accent colors.</p>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:24px;">
+        <div class="bg-white border border-slate-200 rounded-lg p-5">
+          <h3 style="margin-top:0">Joe — 800×480</h3>
+          <p class="text-sm text-slate-600 mb-3">Header bar · weather left · quote right.</p>
+          <pre><code>┌──────────────────────────────────────────┐
+│ JDU DASHBOARD    Wednesday, May 21, 2026 │
+│──────────────────────────────────────────│
+│                  │                       │
+│  TODAY'S WEATHER │  QUOTE                │
+│                  │                       │
+│  [●]  91°        │  "The divine is not   │
+│  ↑ cond. color   │   something high…"    │
+│                  │                       │
+│  Sunny · 3% rain │    — Morihei Ueshiba  │
+│  ┌─────────────┐ │                       │
+│  │ Sunny. High │ │                       │
+│  │ near 91…    │ │                       │
+│  └─────────────┘ │                       │
+└──────────────────────────────────────────┘</code></pre>
+        </div>
+        <div class="bg-white border border-slate-200 rounded-lg p-5">
+          <h3 style="margin-top:0">Sam — 600×400</h3>
+          <p class="text-sm text-slate-600 mb-3">Header bar · quote left · weather right.</p>
+          <pre><code>┌────────────────────────────────────┐
+│ JOY OF MY LIFE   Wednesday, May 21 │
+│────────────────────────────────────│
+│                │                   │
+│ TODAY'S THOUGHT│  WEATHER          │
+│                │                   │
+│ "The divine    │  [●]  91°         │
+│  is not        │  ↑ cond. color    │
+│  something…"   │  Sunny            │
+│                │  ┌─────────────┐  │
+│ — Ueshiba      │  │ Sunny. High │  │
+│                │  │ near 91…    │  │
+│                │  └─────────────┘  │
+└────────────────────────────────────┘</code></pre>
+        </div>
+      </div>
+
+      <h2>Dark Palette (both profiles)</h2>
+      <table>
+        <thead><tr><th>Element</th><th>Hex</th><th>Used in</th></tr></thead>
+        <tbody>
+          <tr><td>Background</td><td><code>#000000</code></td><td>Full image background</td></tr>
+          <tr><td>Header border</td><td><code>#222222</code></td><td>1px line under header</td></tr>
+          <tr><td>Vertical divider</td><td><code>#444444</code></td><td>2px line between panels</td></tr>
+          <tr><td>All text</td><td><code>#ffffff</code></td><td>Labels, quotes, temp, forecast, dates</td></tr>
+          <tr><td>Forecast box bg</td><td><code>#1a1a1a</code></td><td>Rounded rect behind detailed forecast</td></tr>
+          <tr><td>Forecast box border</td><td><code>#303030</code></td><td>Outline of forecast box</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Typography</h2>
+      <p class="text-sm text-slate-600 mb-2">Inter Regular and Bold bundled at <code>assets/fonts/</code>. No external font calls at runtime.</p>
+      <table>
+        <thead><tr><th>Element</th><th>Joe size</th><th>Sam size</th><th>Weight</th></tr></thead>
+        <tbody>
+          <tr><td>Header title</td><td>18px</td><td>16px</td><td>Bold</td></tr>
+          <tr><td>Header date</td><td>15px</td><td>13px</td><td>Regular</td></tr>
+          <tr><td>Section labels</td><td>13px</td><td>12px</td><td>Bold</td></tr>
+          <tr><td>Temperature</td><td>80px</td><td>52px</td><td>Bold</td></tr>
+          <tr><td>Condition subtitle</td><td>16px</td><td>13px</td><td>Regular</td></tr>
+          <tr><td>Forecast detail</td><td>13px</td><td>11px</td><td>Regular</td></tr>
+          <tr><td>Quote text</td><td>18px</td><td>14px</td><td>Regular</td></tr>
+          <tr><td>Author</td><td>14px</td><td>12px</td><td>Regular</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Condition Accent Colors — app/accent.py</h2>
+      <p class="text-sm text-slate-600 mb-2">Temperature digit and icon circle background use condition-matched colors. First-match-wins against NOAA <code>shortForecast</code>. Colors from the Inky Impression 7-color native palette.</p>
+      <table>
+        <thead><tr><th>Keywords</th><th>Temp color</th><th>Icon bg</th></tr></thead>
+        <tbody>
+          <tr><td><code>mostly sunny</code>, <code>mostly clear</code></td><td><code>#ffe900</code> yellow</td><td><code>#ffe900</code></td></tr>
+          <tr><td><code>partly cloudy</code>, <code>partly sunny</code></td><td><code>#aaaaaa</code> gray</td><td><code>#2a2a2a</code></td></tr>
+          <tr><td><code>mostly cloudy</code></td><td><code>#aaaaaa</code></td><td><code>#2a2a2a</code></td></tr>
+          <tr><td><code>sunny</code>, <code>clear</code>, <code>hot</code></td><td><code>#ffe900</code> yellow</td><td><code>#ffe900</code></td></tr>
+          <tr><td><code>cloudy</code>, <code>overcast</code></td><td><code>#aaaaaa</code></td><td><code>#2a2a2a</code></td></tr>
+          <tr><td><code>freezing drizzle</code>, <code>drizzle</code></td><td><code>#cce8ff</code> pale blue</td><td><code>#1a3a5c</code></td></tr>
+          <tr><td><code>showers</code>, <code>chance rain</code></td><td><code>#5b9bd5</code> blue</td><td><code>#00439c</code></td></tr>
+          <tr><td><code>heavy rain</code>, <code>flood</code></td><td><code>#5b9bd5</code></td><td><code>#00439c</code></td></tr>
+          <tr><td><code>sleet</code>, <code>freezing rain</code>, <code>wintry mix</code></td><td><code>#cce8ff</code></td><td><code>#1a3a5c</code></td></tr>
+          <tr><td><code>rain</code></td><td><code>#5b9bd5</code></td><td><code>#00439c</code></td></tr>
+          <tr><td><code>blizzard</code>, <code>heavy snow</code></td><td><code>#cce8ff</code></td><td><code>#1a3a5c</code></td></tr>
+          <tr><td><code>flurries</code>, <code>chance snow</code></td><td><code>#cce8ff</code></td><td><code>#1a3a5c</code></td></tr>
+          <tr><td><code>snow</code></td><td><code>#cce8ff</code></td><td><code>#1a3a5c</code></td></tr>
+          <tr><td><code>thunder</code>, <code>storm</code></td><td><code>#ff7201</code> orange</td><td><code>#333333</code></td></tr>
+          <tr><td><code>tornado</code>, <code>hurricane</code>, <code>tropical</code></td><td><code>#ff7201</code></td><td><code>#333333</code></td></tr>
+          <tr><td><code>fog</code>, <code>mist</code></td><td><code>#888888</code> gray</td><td><code>#222222</code></td></tr>
+          <tr><td><code>haze</code>, <code>smoke</code>, <code>dust</code>, <code>sand</code></td><td><code>#888888</code></td><td><code>#222222</code></td></tr>
+          <tr><td><code>wind</code>, <code>breezy</code>, <code>blustery</code></td><td><code>#aaaaaa</code></td><td><code>#2a2a2a</code></td></tr>
+          <tr><td><em>fallback</em></td><td><code>#ffe900</code></td><td><code>#ffe900</code></td></tr>
+        </tbody>
+      </table>
+    </section>
+```
+
+- [ ] **Step 2: Verify**
+
+```bash
+open docs/index.html
+```
+
+Click "Display Profiles". Expected: two layout ASCII diagrams side-by-side, dark palette table, typography table, accent color table with 19 rows.
+
+- [ ] **Step 3: Commit**
+
+```bash
+git add docs/index.html
+git commit -m "docs: add Display Profiles section"
+```
+
+---
+
+## Task 8: Configuration Section
+
+**Files:**
+- Modify: `docs/index.html`
+
+- [ ] **Step 1: Replace the empty configuration section**
+
+In `docs/index.html`, replace:
+```
+    <section id="configuration" hidden>
+    </section>
+```
+
+With:
+```html
+    <section id="configuration" hidden>
+      <h1>Configuration</h1>
+      <p class="text-slate-500 text-sm mb-6">All configuration via environment variables. No secrets file — no auth required (local network only).</p>
+
+      <h2>Environment Variables</h2>
+      <table>
+        <thead><tr><th>Variable</th><th>Default</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td><code>PORT</code></td><td><code>8000</code></td><td>uvicorn listen port. Set in <code>docker-compose.yml</code>.</td></tr>
+          <tr><td><code>NOAA_GRID</code></td><td><code>PSR/166,61</code></td><td>NOAA gridpoint. Format: <code>{office}/{x},{y}</code>. PSR = Phoenix, AZ.</td></tr>
+          <tr><td><code>REFRESH_HOUR_INTERVAL</code></td><td><code>1</code></td><td>Read by <code>Settings</code> but not currently wired to the scheduler trigger — the trigger is hardcoded to <code>CronTrigger(minute=0)</code>.</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Python Environment</h2>
+      <div class="bg-white border border-slate-200 rounded-lg p-5 mb-4">
+        <p class="text-sm text-slate-600 mb-2">Use <code>venv/bin/python</code> (Python 3.12 via Homebrew). System Python 3.9 on macOS cannot load <code>cairosvg</code> because <code>cairocffi</code> cannot find <code>libcairo</code> without the venv.</p>
+        <pre><code># Run tests
+venv/bin/pytest tests/
+
+# Start server locally
+venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000
+
+# Build and run in Docker
+docker compose up --build</code></pre>
+      </div>
+
+      <h2>Fonts</h2>
+      <table>
+        <thead><tr><th>File</th><th>Used for</th></tr></thead>
+        <tbody>
+          <tr><td><code>assets/fonts/Inter-Regular.ttf</code></td><td>All regular-weight text in both renderers</td></tr>
+          <tr><td><code>assets/fonts/Inter-Bold.ttf</code></td><td>Header titles, section labels, temperature digits</td></tr>
+        </tbody>
+      </table>
+      <p class="text-sm text-slate-600 mt-2">Fonts are bundled in the Docker image — no external font calls at runtime.</p>
+
+      <h2>Synology vs. Local Directories</h2>
+      <p class="text-sm text-slate-600">The <code>synology/</code> directory contains a parallel copy of <code>app/</code> with its own <code>Dockerfile</code> and <code>docker-compose.yml</code> tuned for Synology NAS deployment. Changes to the main <code>app/</code> should be synced to <code>synology/app/</code>.</p>
+    </section>
+```
+
+- [ ] **Step 2: Verify**
+
+```bash
+open docs/index.html
+```
+
+Click "Configuration". Expected: env vars table with 3 rows, Python environment card with commands, fonts table, Synology note.
+
+- [ ] **Step 3: Commit**
+
+```bash
+git add docs/index.html
+git commit -m "docs: add Configuration section"
+```
+
+---
+
+## Task 9: Deployment Section
+
+**Files:**
+- Modify: `docs/index.html`
+
+- [ ] **Step 1: Replace the empty deployment section**
+
+In `docs/index.html`, replace:
+```
+    <section id="deployment" hidden>
+    </section>
+```
+
+With:
+```html
+    <section id="deployment" hidden>
+      <h1>Deployment</h1>
+      <p class="text-slate-500 text-sm mb-6">FastAPI server runs in Docker on a Synology NAS. A Raspberry Pi fetches the PNG on a cron schedule.</p>
+
+      <h2>Quick Reference</h2>
+      <pre><code># Build and start (from eink-dashboard/synology/)
+docker compose up --build -d
+
+# Check health
+curl http://synology:8000/health
+
+# Fetch a dashboard manually
+curl -o /tmp/joe.png http://synology:8000/dashboard/joe.png
+
+# Tail logs
+docker compose logs -f inkydashboard</code></pre>
+
+      <h2>Synology NAS Setup</h2>
+      <div class="bg-white border border-slate-200 rounded-lg p-5 mb-4">
+        <p class="text-sm text-slate-600 mb-3">Deploy from <code>eink-dashboard/synology/</code>. The <code>docker-compose.yml</code> sets all required env vars.</p>
+        <table>
+          <tbody>
+            <tr><td class="font-medium w-32">Image</td><td>Built from <code>synology/Dockerfile</code> (Python 3.12-slim + <code>libcairo2</code>)</td></tr>
+            <tr><td class="font-medium">Port</td><td><code>8000:8000</code> — accessible on LAN as <code>http://synology:8000</code></td></tr>
+            <tr><td class="font-medium">Restart</td><td><code>unless-stopped</code></td></tr>
+            <tr><td class="font-medium">State</td><td>No volumes, no database — all state is in-memory. A container restart triggers a fresh refresh cycle.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Raspberry Pi Setup</h2>
+      <div class="bg-white border border-slate-200 rounded-lg p-5 mb-4">
+        <p class="text-sm text-slate-600 mb-3"><code>pi/dailyDash.sh</code> replaces the old Firefox screenshot pipeline. Cron runs it at <code>:30</code> each hour (30 min after the NAS refreshes at <code>:00</code>).</p>
+        <pre><code>#!/bin/bash
+# pi/dailyDash.sh
+curl -sf http://synology:8000/dashboard/joe.png -o /tmp/dashboard.png || exit 1
+/home/red/Dev/scripts/dailyClear.py
+/home/red/Dev/scripts/dailyEink.py /tmp/dashboard.png</code></pre>
+        <table>
+          <tbody>
+            <tr><td class="font-medium w-32">Sam's Pi</td><td>Change <code>joe.png</code> → <code>sam.png</code> in the curl URL.</td></tr>
+            <tr><td class="font-medium">Unchanged</td><td><code>dailyEink.py</code> and <code>dailyClear.py</code> are not modified from the original pipeline.</td></tr>
+            <tr><td class="font-medium">Removed</td><td><code>killFirefox.sh</code> is no longer needed (was part of the old Node.js/headless Firefox pipeline).</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Full Data Flow</h2>
+      <div class="bg-white border border-slate-200 rounded-lg p-6">
+        <div class="mermaid">
+graph TD
+    subgraph NAS["Synology NAS — Docker :8000"]
+        fastapi["FastAPI · app/main.py"]
+        cache["DashboardCache\n(in-memory)"]
+        sched["APScheduler\nCronTrigger(minute=0)"]
+    end
+    noaa["NOAA\napi.weather.gov"]
+    zenq["ZenQuotes\nzenquotes.io"]
+    basm["Basmilius Icons\nraw.githubusercontent.com"]
+    pi["Raspberry Pi\ndailyDash.sh cron :30"]
+    display["Pimoroni Inky Impression\ndailyEink.py · dailyClear.py"]
+
+    sched -->|"fetch_weather()"| noaa
+    sched -->|"fetch_quote()"| zenq
+    sched -->|"rasterize_svg() all icons"| basm
+    sched -->|"store(joe_bytes, sam_bytes)"| cache
+    fastapi -->|"get_joe()"| cache
+    pi -->|"GET /dashboard/joe.png"| fastapi
+    pi --> display
+        </div>
+      </div>
+    </section>
+```
+
+- [ ] **Step 2: Verify**
+
+```bash
+open docs/index.html
+```
+
+Click "Deployment". Expected: quick reference code block, Synology setup card with table, Pi setup card with `dailyDash.sh` snippet and table, Mermaid data flow diagram renders correctly.
+
+- [ ] **Step 3: Commit**
+
+```bash
+git add docs/index.html
+git commit -m "docs: add Deployment section — complete architecture reference"
+```
+
+---
+
+## Self-Review
+
+**Spec coverage:**
+- ✅ Overview — platform cards, key design principles
+- ✅ Architecture — 3 Mermaid diagrams (system topology, request flow, refresh cycle)
+- ✅ Modules — all 11 `app/*.py` files with public interface tables
+- ✅ API Endpoints — 3 endpoints, `/health` JSON, error behavior table
+- ✅ Data Sources — NOAA, ZenQuotes, Basmilius + 19-row icon mapping table
+- ✅ Display Profiles — layout diagrams, dark palette, typography, accent color table
+- ✅ Configuration — env vars, Python env, fonts, Synology note
+- ✅ Deployment — quick reference, Synology setup, Pi setup with script, data flow diagram
+
+**Placeholder scan:** No TBD, TODO, or "similar to" references.
+
+**Type consistency:**
+- `render_joe(weather, quote, icons) → bytes` — consistent across Modules and Display Profiles ✅
+- `render_sam(weather, quote, icons) → bytes` — same ✅
+- `cache.store(joe, sam, *, noaa_ok, quotes_ok)` — matches Modules section ✅
+- `load_all_icons(size=120)` — documented as synchronous in both Modules and Data Sources ✅
+- `select_accent(short_forecast) → (temp_color, icon_bg_color)` — consistent ✅
