@@ -388,6 +388,104 @@ graph LR
     </section>
 
     <section id="profiles" hidden>
+      <h1>Display Profiles</h1>
+      <p class="text-slate-500 text-sm mb-6">Two profiles share the same data but differ in dimensions and layout. Both use the dark palette with condition-matched accent colors.</p>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:24px;">
+        <div class="bg-white border border-slate-200 rounded-lg p-5">
+          <h3 style="margin-top:0">Joe — 800×480</h3>
+          <p class="text-sm text-slate-600 mb-3">Header bar · weather left · quote right.</p>
+          <pre><code>┌──────────────────────────────────────────┐
+│ JDU DASHBOARD    Wednesday, May 21, 2026 │
+│──────────────────────────────────────────│
+│                  │                       │
+│  TODAY'S WEATHER │  QUOTE                │
+│                  │                       │
+│  [●]  91°        │  "The divine is not   │
+│  ↑ cond. color   │   something high…"    │
+│                  │                       │
+│  Sunny · 3% rain │    — Morihei Ueshiba  │
+│  ┌─────────────┐ │                       │
+│  │ Sunny. High │ │                       │
+│  │ near 91…    │ │                       │
+│  └─────────────┘ │                       │
+└──────────────────────────────────────────┘</code></pre>
+        </div>
+        <div class="bg-white border border-slate-200 rounded-lg p-5">
+          <h3 style="margin-top:0">Sam — 600×400</h3>
+          <p class="text-sm text-slate-600 mb-3">Header bar · quote left · weather right.</p>
+          <pre><code>┌────────────────────────────────────┐
+│ JOY OF MY LIFE   Wednesday, May 21 │
+│────────────────────────────────────│
+│                │                   │
+│ TODAY'S THOUGHT│  WEATHER          │
+│                │                   │
+│ "The divine    │  [●]  91°         │
+│  is not        │  ↑ cond. color    │
+│  something…"   │  Sunny            │
+│                │  ┌─────────────┐  │
+│ — Ueshiba      │  │ Sunny. High │  │
+│                │  │ near 91…    │  │
+│                │  └─────────────┘  │
+└────────────────────────────────────┘</code></pre>
+        </div>
+      </div>
+
+      <h2>Dark Palette (both profiles)</h2>
+      <table>
+        <thead><tr><th>Element</th><th>Hex</th><th>Used in</th></tr></thead>
+        <tbody>
+          <tr><td>Background</td><td><code>#000000</code></td><td>Full image background</td></tr>
+          <tr><td>Header border</td><td><code>#222222</code></td><td>1px line under header</td></tr>
+          <tr><td>Vertical divider</td><td><code>#444444</code></td><td>2px line between panels</td></tr>
+          <tr><td>All text</td><td><code>#ffffff</code></td><td>Labels, quotes, temp, forecast, dates</td></tr>
+          <tr><td>Forecast box bg</td><td><code>#1a1a1a</code></td><td>Rounded rect behind detailed forecast</td></tr>
+          <tr><td>Forecast box border</td><td><code>#303030</code></td><td>Outline of forecast box</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Typography</h2>
+      <p class="text-sm text-slate-600 mb-2">Inter Regular and Bold bundled at <code>assets/fonts/</code>. No external font calls at runtime.</p>
+      <table>
+        <thead><tr><th>Element</th><th>Joe size</th><th>Sam size</th><th>Weight</th></tr></thead>
+        <tbody>
+          <tr><td>Header title</td><td>18px</td><td>16px</td><td>Bold</td></tr>
+          <tr><td>Header date</td><td>15px</td><td>13px</td><td>Regular</td></tr>
+          <tr><td>Section labels</td><td>13px</td><td>12px</td><td>Bold</td></tr>
+          <tr><td>Temperature</td><td>80px</td><td>52px</td><td>Bold</td></tr>
+          <tr><td>Condition subtitle</td><td>16px</td><td>13px</td><td>Regular</td></tr>
+          <tr><td>Forecast detail</td><td>13px</td><td>11px</td><td>Regular</td></tr>
+          <tr><td>Quote text</td><td>18px</td><td>14px</td><td>Regular</td></tr>
+          <tr><td>Author</td><td>14px</td><td>12px</td><td>Regular</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Condition Accent Colors — app/accent.py</h2>
+      <p class="text-sm text-slate-600 mb-2">Temperature digit and icon circle background use condition-matched colors. First-match-wins against NOAA <code>shortForecast</code>. Colors from the Inky Impression 7-color native palette.</p>
+      <table>
+        <thead><tr><th>Keywords</th><th>Temp color</th><th>Icon bg</th></tr></thead>
+        <tbody>
+          <tr><td><code>mostly sunny</code>, <code>mostly clear</code></td><td><code>#ffe900</code> yellow</td><td><code>#ffe900</code></td></tr>
+          <tr><td><code>partly cloudy</code>, <code>partly sunny</code></td><td><code>#aaaaaa</code> gray</td><td><code>#2a2a2a</code></td></tr>
+          <tr><td><code>mostly cloudy</code></td><td><code>#aaaaaa</code></td><td><code>#2a2a2a</code></td></tr>
+          <tr><td><code>sunny</code>, <code>clear</code>, <code>hot</code></td><td><code>#ffe900</code> yellow</td><td><code>#ffe900</code></td></tr>
+          <tr><td><code>cloudy</code>, <code>overcast</code></td><td><code>#aaaaaa</code></td><td><code>#2a2a2a</code></td></tr>
+          <tr><td><code>freezing drizzle</code>, <code>drizzle</code></td><td><code>#cce8ff</code> pale blue</td><td><code>#1a3a5c</code></td></tr>
+          <tr><td><code>showers</code>, <code>chance rain</code></td><td><code>#5b9bd5</code> blue</td><td><code>#00439c</code></td></tr>
+          <tr><td><code>heavy rain</code>, <code>flood</code></td><td><code>#5b9bd5</code></td><td><code>#00439c</code></td></tr>
+          <tr><td><code>sleet</code>, <code>freezing rain</code>, <code>wintry mix</code></td><td><code>#cce8ff</code></td><td><code>#1a3a5c</code></td></tr>
+          <tr><td><code>rain</code></td><td><code>#5b9bd5</code></td><td><code>#00439c</code></td></tr>
+          <tr><td><code>blizzard</code>, <code>heavy snow</code></td><td><code>#cce8ff</code></td><td><code>#1a3a5c</code></td></tr>
+          <tr><td><code>flurries</code>, <code>chance snow</code></td><td><code>#cce8ff</code></td><td><code>#1a3a5c</code></td></tr>
+          <tr><td><code>snow</code></td><td><code>#cce8ff</code></td><td><code>#1a3a5c</code></td></tr>
+          <tr><td><code>thunder</code>, <code>storm</code></td><td><code>#ff7201</code> orange</td><td><code>#333333</code></td></tr>
+          <tr><td><code>tornado</code>, <code>hurricane</code>, <code>tropical</code></td><td><code>#ff7201</code></td><td><code>#333333</code></td></tr>
+          <tr><td><code>fog</code>, <code>mist</code></td><td><code>#888888</code> gray</td><td><code>#222222</code></td></tr>
+          <tr><td><code>haze</code>, <code>smoke</code>, <code>dust</code>, <code>sand</code></td><td><code>#888888</code></td><td><code>#222222</code></td></tr>
+          <tr><td><code>wind</code>, <code>breezy</code>, <code>blustery</code></td><td><code>#aaaaaa</code></td><td><code>#2a2a2a</code></td></tr>
+          <tr><td><em>fallback</em></td><td><code>#ffe900</code></td><td><code>#ffe900</code></td></tr>
+        </tbody>
+      </table>
     </section>
 
     <section id="configuration" hidden>
