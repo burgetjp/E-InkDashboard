@@ -277,6 +277,45 @@ graph LR
     </section>
 
     <section id="endpoints" hidden>
+      <h1>API Endpoints</h1>
+      <p class="text-slate-500 text-sm mb-6">The FastAPI server exposes three endpoints on port 8000.</p>
+
+      <table>
+        <thead><tr><th>Method</th><th>Path</th><th>Response Type</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code>GET</code></td><td><code>/dashboard/joe.png</code></td><td><code>image/png</code></td>
+            <td>800×480 Joe profile. Returns cached bytes; no render on request.</td>
+          </tr>
+          <tr>
+            <td><code>GET</code></td><td><code>/dashboard/sam.png</code></td><td><code>image/png</code></td>
+            <td>600×400 Sam profile. Returns cached bytes; no render on request.</td>
+          </tr>
+          <tr>
+            <td><code>GET</code></td><td><code>/health</code></td><td><code>application/json</code></td>
+            <td>Last refresh timestamp and per-API status flags.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>/health Response</h2>
+      <pre><code>{
+  "last_refresh": "2026-05-21T07:00:03.142857",  // ISO-8601, or null on first boot
+  "noaa_ok": true,                                // false if last NOAA fetch raised
+  "quotes_ok": true                               // false if last ZenQuotes fetch raised
+}</code></pre>
+      <p class="text-sm text-slate-600 mt-3"><code>last_refresh</code> is set by <code>cache.store()</code> via <code>datetime.now()</code>. A failed refresh that keeps the previous cache does <em>not</em> update <code>last_refresh</code>.</p>
+
+      <h2>Error Behavior</h2>
+      <table>
+        <thead><tr><th>Scenario</th><th>Behavior</th></tr></thead>
+        <tbody>
+          <tr><td>NOAA down at refresh</td><td>Keep previous PNGs. Set <code>noaa_ok = False</code>. Log warning.</td></tr>
+          <tr><td>ZenQuotes down at refresh</td><td>Keep previous PNGs. Set <code>quotes_ok = False</code>. Log warning.</td></tr>
+          <tr><td>Both APIs down on first boot</td><td><code>get_joe()</code> / <code>get_sam()</code> return a plain "Dashboard starting…" fallback PNG.</td></tr>
+          <tr><td>Pi curl fails</td><td><code>dailyDash.sh</code> exits early; display is not cleared or updated.</td></tr>
+        </tbody>
+      </table>
     </section>
 
     <section id="datasources" hidden>
