@@ -158,6 +158,122 @@ graph LR
     </section>
 
     <section id="modules" hidden>
+      <h1>Modules</h1>
+      <p class="text-slate-500 text-sm mb-6">All source files live in <code>eink-dashboard/app/</code>.</p>
+
+      <h2>app/main.py</h2>
+      <p class="text-sm text-slate-600 mb-3">FastAPI application, lifespan handler, and the three route functions.</p>
+      <table>
+        <thead><tr><th>Symbol</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>lifespan(app)</code></td><td>Async context manager. On enter: <code>await refresh_dashboard()</code> then <code>start_scheduler()</code>. On exit: <code>scheduler.shutdown(wait=False)</code>.</td></tr>
+          <tr><td><code>joe_png()</code></td><td><code>GET /dashboard/joe.png</code> → <code>Response(cache.get_joe(), "image/png")</code></td></tr>
+          <tr><td><code>sam_png()</code></td><td><code>GET /dashboard/sam.png</code> → <code>Response(cache.get_sam(), "image/png")</code></td></tr>
+          <tr><td><code>health()</code></td><td><code>GET /health</code> → JSON with <code>last_refresh</code> (ISO-8601 or null), <code>noaa_ok</code>, <code>quotes_ok</code>.</td></tr>
+        </tbody>
+      </table>
+
+      <h2>app/config.py</h2>
+      <p class="text-sm text-slate-600 mb-3">Pydantic-settings configuration. Reads from environment variables and an optional <code>.env</code> file. Module-level <code>settings</code> singleton imported by <code>main.py</code> and <code>scheduler.py</code>.</p>
+      <table>
+        <thead><tr><th>Field</th><th>Type</th><th>Default</th></tr></thead>
+        <tbody>
+          <tr><td><code>port</code></td><td>int</td><td>8000</td></tr>
+          <tr><td><code>noaa_grid</code></td><td>str</td><td>"PSR/166,61"</td></tr>
+          <tr><td><code>refresh_hour_interval</code></td><td>int</td><td>1</td></tr>
+        </tbody>
+      </table>
+
+      <h2>app/cache.py</h2>
+      <p class="text-sm text-slate-600 mb-3">In-memory PNG storage. The module-level <code>cache</code> singleton is shared by <code>main.py</code> (reads) and <code>scheduler.py</code> (writes).</p>
+      <table>
+        <thead><tr><th>Symbol</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>DashboardCache</code></td><td>Dataclass: <code>joe_png: bytes|None</code>, <code>sam_png: bytes|None</code>, <code>last_refresh: datetime|None</code>, <code>noaa_ok: bool</code>, <code>quotes_ok: bool</code>.</td></tr>
+          <tr><td><code>.store(joe, sam, *, noaa_ok, quotes_ok)</code></td><td>Stores PNG bytes and sets <code>last_refresh = datetime.now()</code>.</td></tr>
+          <tr><td><code>.get_joe()</code> / <code>.get_sam()</code></td><td>Returns stored bytes, or a plain fallback PNG ("Dashboard starting…") if not yet populated.</td></tr>
+          <tr><td><code>cache</code></td><td>Module-level singleton — the single shared <code>DashboardCache</code> instance.</td></tr>
+        </tbody>
+      </table>
+
+      <h2>app/weather.py</h2>
+      <p class="text-sm text-slate-600 mb-3">NOAA Weather API client. Raises <code>httpx.HTTPStatusError</code> on non-2xx — the scheduler catches this and keeps the previous cache.</p>
+      <table>
+        <thead><tr><th>Symbol</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>WeatherData</code></td><td>Dataclass: <code>period_name</code>, <code>temperature</code>, <code>short_forecast</code>, <code>detailed_forecast</code>, <code>precip_percent</code>.</td></tr>
+          <tr><td><code>fetch_weather(grid: str)</code></td><td>Async. Fetches <code>https://api.weather.gov/gridpoints/{grid}/forecast</code>. Returns <code>WeatherData</code> from <code>periods[0]</code>. Raises <code>HTTPStatusError</code> on failure.</td></tr>
+        </tbody>
+      </table>
+
+      <h2>app/quotes.py</h2>
+      <p class="text-sm text-slate-600 mb-3">ZenQuotes API client. Same error contract as the weather client.</p>
+      <table>
+        <thead><tr><th>Symbol</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>QuoteData</code></td><td>Dataclass: <code>text</code>, <code>author</code>.</td></tr>
+          <tr><td><code>fetch_quote()</code></td><td>Async. Fetches <code>https://zenquotes.io/api/random</code>. Returns <code>QuoteData</code>. Raises <code>HTTPStatusError</code> on failure.</td></tr>
+        </tbody>
+      </table>
+
+      <h2>app/icons.py</h2>
+      <p class="text-sm text-slate-600 mb-3">Weather icon mapping and SVG rasterization. <strong>Multi-word keywords must precede their single-word components</strong> in <code>ICON_MAPPING</code> — first-match-wins means <code>"mostly sunny"</code> must appear before <code>"sunny"</code>.</p>
+      <table>
+        <thead><tr><th>Symbol</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>ICON_MAPPING</code></td><td><code>list[tuple[list[str], str, str]]</code> — 18 condition groups of <code>(keywords, day_icon_name, night_icon_name)</code>.</td></tr>
+          <tr><td><code>select_icon_name(short_forecast, period_name)</code></td><td>Case-insensitive substring match. Night if <code>period_name.lower()</code> is <code>"tonight"</code> or <code>"overnight"</code>. Fallback: <code>"clear-day"</code> / <code>"clear-night"</code>.</td></tr>
+          <tr><td><code>rasterize_svg(name, size)</code></td><td>Synchronous. Fetches <code>{BASE_URL}{name}.svg</code> via <code>httpx.Client</code>, converts via <code>cairosvg.svg2png()</code>, returns RGBA <code>Image</code>.</td></tr>
+          <tr><td><code>load_all_icons(size=120)</code></td><td>Synchronous. Rasterizes every unique icon name in <code>ICON_MAPPING</code>. On per-icon failure: gray placeholder. Returns <code>dict[str, Image]</code>.</td></tr>
+        </tbody>
+      </table>
+
+      <h2>app/accent.py</h2>
+      <p class="text-sm text-slate-600 mb-3">Condition-to-color mapping for dark mode. Same first-match-wins pattern as <code>icons.py</code>. Colors drawn from the Inky Impression 7-color native palette to avoid dithering.</p>
+      <table>
+        <thead><tr><th>Symbol</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>select_accent(short_forecast: str)</code></td><td>Returns <code>(temp_color, icon_bg_color)</code> as hex strings. Fallback: <code>("#ffe900", "#ffe900")</code>.</td></tr>
+        </tbody>
+      </table>
+
+      <h2>app/draw_utils.py</h2>
+      <p class="text-sm text-slate-600 mb-3">Shared Pillow text utility used by both renderers.</p>
+      <table>
+        <thead><tr><th>Symbol</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>wrap_text(draw, text, font, max_width)</code></td><td>Splits <code>text</code> into <code>list[str]</code> where each line fits within <code>max_width</code> px via <code>draw.textlength()</code>. A word wider than <code>max_width</code> appears alone on its line.</td></tr>
+        </tbody>
+      </table>
+
+      <h2>app/render_joe.py</h2>
+      <p class="text-sm text-slate-600 mb-3">800×480 dark-mode renderer for Joe's Pimoroni Inky Impression display. Calls <code>select_accent()</code> and <code>select_icon_name()</code> internally.</p>
+      <table>
+        <thead><tr><th>Symbol</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>render_joe(weather, quote, icons)</code></td><td>Returns <code>bytes</code> (PNG). Layout: header bar (title left, date right) → vertical divider → weather panel left (icon circle + 80px temp + subtitle + forecast box) · quote panel right (label + wrapped quote + right-aligned author).</td></tr>
+        </tbody>
+      </table>
+
+      <h2>app/render_sam.py</h2>
+      <p class="text-sm text-slate-600 mb-3">600×400 dark-mode renderer for Sam's display. Same color constants and font helper as <code>render_joe.py</code>, mirrored layout.</p>
+      <table>
+        <thead><tr><th>Symbol</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>render_sam(weather, quote, icons)</code></td><td>Returns <code>bytes</code> (PNG). Layout: header bar → vertical divider → quote panel left · weather panel right (icon circle + 52px temp + condition + forecast box).</td></tr>
+        </tbody>
+      </table>
+
+      <h2>app/scheduler.py</h2>
+      <p class="text-sm text-slate-600 mb-3">APScheduler setup and the refresh coroutine. The module-level <code>scheduler</code> is started in <code>main.py</code>'s lifespan and shut down on exit.</p>
+      <table>
+        <thead><tr><th>Symbol</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>scheduler</code></td><td>Module-level <code>AsyncIOScheduler</code> instance.</td></tr>
+          <tr><td><code>refresh_dashboard(cache, noaa_grid)</code></td><td>Async. Calls <code>load_all_icons()</code>, then <code>fetch_weather()</code> and <code>fetch_quote()</code>. If either raises, updates status flags and returns without touching cached PNGs. On success: <code>render_joe()</code> + <code>render_sam()</code> + <code>cache.store()</code>.</td></tr>
+          <tr><td><code>start_scheduler(noaa_grid)</code></td><td>Adds <code>refresh_dashboard</code> as a <code>CronTrigger(minute=0)</code> job and calls <code>scheduler.start()</code>.</td></tr>
+        </tbody>
+      </table>
     </section>
 
     <section id="endpoints" hidden>
