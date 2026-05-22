@@ -1,0 +1,54 @@
+<h2>Dark Mode — 100% Scale (800×480)</h2>
+<p class="subtitle">Actual pixel dimensions — this is exactly what the display will show.</p>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+
+  .dash { width: 800px; height: 480px; position: relative; font-family: 'Inter', system-ui, sans-serif; overflow: hidden; border: 2px solid #444; border-radius: 4px; background: #000; color: #fff; }
+
+  .hdr { display:flex; justify-content:space-between; align-items:center; padding: 12px 20px; border-bottom: 1px solid #222; }
+  .hdr-title { font-size: 18px; font-weight: 900; letter-spacing: 3px; color: #fff; text-transform: uppercase; }
+  .hdr-date  { font-size: 15px; color: #666; font-weight: 400; }
+
+  .body { display:flex; height: calc(480px - 48px); }
+
+  /* Weather */
+  .wx { flex: 1.4; padding: 20px; border-right: 1px solid #1a1a1a; display:flex; flex-direction:column; gap:12px; }
+  .wx-label { font-size: 11px; letter-spacing: 2.5px; color: #444; font-weight: 700; text-transform:uppercase; }
+  .wx-icon-row { display:flex; align-items:center; gap:16px; margin-top: 4px; }
+  .wx-icon { width: 90px; height: 90px; background: #ffe900; border-radius: 50%; display:flex; align-items:center; justify-content:center; font-size: 44px; flex-shrink:0; }
+  .wx-temp { font-size: 80px; font-weight: 900; color: #ffe900; line-height: 1; }
+  .wx-sub { font-size: 13px; color: #444; margin-top: -4px; }
+  .wx-detail { background: #0d0d0d; border: 1px solid #1e1e1e; border-radius: 6px; padding: 12px 14px; font-size: 13px; color: #666; line-height: 1.6; margin-top: auto; }
+
+  /* Quote */
+  .qt { flex: 1.6; padding: 20px; display:flex; flex-direction:column; gap:12px; }
+  .qt-label { font-size: 11px; letter-spacing: 2.5px; color: #444; font-weight: 700; text-transform:uppercase; }
+  .qt-text { font-size: 18px; color: #ddd; line-height: 1.7; font-style: italic; flex: 1; }
+  .qt-author { font-size: 14px; color: #555; text-align: right; }
+</style>
+
+<div class="dash">
+  <div class="hdr">
+    <div class="hdr-title">JDU Dashboard</div>
+    <div class="hdr-date">Wednesday, April 30, 2026</div>
+  </div>
+  <div class="body">
+    <div class="wx">
+      <div class="wx-label">Today's Weather</div>
+      <div class="wx-icon-row">
+        <div class="wx-icon">☀️</div>
+        <div class="wx-temp">91°</div>
+      </div>
+      <div class="wx-sub">Sunny · 3% chance of rain</div>
+      <div class="wx-detail">Sunny. High near 91. Southwest wind around 5 to 10 mph.</div>
+    </div>
+    <div class="qt">
+      <div class="qt-label">Quote</div>
+      <div class="qt-text">"The divine is not something high above us. It is within us, and around us."</div>
+      <div class="qt-author">— Morihei Ueshiba</div>
+    </div>
+  </div>
+</div>
+
+<p class="subtitle" style="margin-top:16px;">You may need to scroll right if your browser window is narrower than 800px. Let me know what to tweak.</p>

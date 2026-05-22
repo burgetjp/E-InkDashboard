@@ -1,0 +1,174 @@
+<h2>Dark Mode — Weather Variations (800×480)</h2>
+<p class="subtitle">Larger subtitle under icon · scroll down to see different weather conditions</p>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+
+  .dash { width: 800px; height: 480px; position: relative; font-family: 'Inter', system-ui, sans-serif; overflow: hidden; border: 2px solid #444; border-radius: 4px; background: #000; color: #fff; margin-bottom: 32px; }
+
+  .condition-label { font-size: 11px; letter-spacing: 2px; color: #888; text-transform: uppercase; margin-bottom: 8px; }
+
+  .hdr { display:flex; justify-content:space-between; align-items:center; padding: 12px 20px; border-bottom: 1px solid #222; }
+  .hdr-title { font-size: 18px; font-weight: 900; letter-spacing: 3px; color: #fff; text-transform: uppercase; }
+  .hdr-date  { font-size: 15px; color: #666; font-weight: 400; }
+
+  .body { display:flex; height: calc(480px - 48px); }
+
+  .wx { flex: 1.4; padding: 20px; border-right: 1px solid #1a1a1a; display:flex; flex-direction:column; gap:10px; }
+  .wx-label { font-size: 11px; letter-spacing: 2.5px; color: #444; font-weight: 700; text-transform:uppercase; }
+  .wx-icon-row { display:flex; align-items:center; gap:16px; margin-top: 4px; }
+  .wx-icon { width: 90px; height: 90px; border-radius: 50%; display:flex; align-items:center; justify-content:center; font-size: 48px; flex-shrink:0; }
+  .wx-temp { font-size: 80px; font-weight: 900; line-height: 1; }
+  .wx-sub { font-size: 16px; color: #888; margin-top: 2px; font-weight: 400; }
+  .wx-detail { background: #0d0d0d; border: 1px solid #1e1e1e; border-radius: 6px; padding: 12px 14px; font-size: 13px; color: #666; line-height: 1.6; margin-top: auto; }
+
+  .qt { flex: 1.6; padding: 20px; display:flex; flex-direction:column; gap:12px; }
+  .qt-label { font-size: 11px; letter-spacing: 2.5px; color: #444; font-weight: 700; text-transform:uppercase; }
+  .qt-text { font-size: 18px; color: #ddd; line-height: 1.7; font-style: italic; flex: 1; }
+  .qt-author { font-size: 14px; color: #555; text-align: right; }
+
+  /* per-condition accent colors */
+  .sunny .wx-icon  { background: #ffe900; }
+  .sunny .wx-temp  { color: #ffe900; }
+
+  .rain .wx-icon   { background: #00439c; }
+  .rain .wx-temp   { color: #5b9bd5; }
+  .rain .wx-sub    { color: #5b9bd5; }
+
+  .storm .wx-icon  { background: #444; }
+  .storm .wx-temp  { color: #ff7201; }
+  .storm .wx-sub   { color: #ff7201; }
+
+  .snow .wx-icon   { background: #cce8ff; }
+  .snow .wx-temp   { color: #cce8ff; }
+
+  .cloudy .wx-icon { background: #333; }
+  .cloudy .wx-temp { color: #aaa; }
+</style>
+
+<!-- SUNNY -->
+<div class="condition-label">☀️ Sunny</div>
+<div class="dash sunny">
+  <div class="hdr">
+    <div class="hdr-title">JDU Dashboard</div>
+    <div class="hdr-date">Wednesday, April 30, 2026</div>
+  </div>
+  <div class="body">
+    <div class="wx">
+      <div class="wx-label">Today's Weather</div>
+      <div class="wx-icon-row">
+        <div class="wx-icon">☀️</div>
+        <div class="wx-temp">91°</div>
+      </div>
+      <div class="wx-sub">Sunny · 3% chance of rain</div>
+      <div class="wx-detail">Sunny. High near 91. Southwest wind around 5 to 10 mph.</div>
+    </div>
+    <div class="qt">
+      <div class="qt-label">Quote</div>
+      <div class="qt-text">"The divine is not something high above us. It is within us, and around us."</div>
+      <div class="qt-author">— Morihei Ueshiba</div>
+    </div>
+  </div>
+</div>
+
+<!-- RAIN -->
+<div class="condition-label">🌧️ Rain</div>
+<div class="dash rain">
+  <div class="hdr">
+    <div class="hdr-title">JDU Dashboard</div>
+    <div class="hdr-date">Wednesday, April 30, 2026</div>
+  </div>
+  <div class="body">
+    <div class="wx">
+      <div class="wx-label">Today's Weather</div>
+      <div class="wx-icon-row">
+        <div class="wx-icon">🌧️</div>
+        <div class="wx-temp">58°</div>
+      </div>
+      <div class="wx-sub">Rain · 85% chance of rain</div>
+      <div class="wx-detail">Rain likely. Cloudy. High near 58. South wind 10 to 15 mph.</div>
+    </div>
+    <div class="qt">
+      <div class="qt-label">Quote</div>
+      <div class="qt-text">"The divine is not something high above us. It is within us, and around us."</div>
+      <div class="qt-author">— Morihei Ueshiba</div>
+    </div>
+  </div>
+</div>
+
+<!-- THUNDERSTORM -->
+<div class="condition-label">⛈️ Thunderstorm</div>
+<div class="dash storm">
+  <div class="hdr">
+    <div class="hdr-title">JDU Dashboard</div>
+    <div class="hdr-date">Wednesday, April 30, 2026</div>
+  </div>
+  <div class="body">
+    <div class="wx">
+      <div class="wx-label">Today's Weather</div>
+      <div class="wx-icon-row">
+        <div class="wx-icon">⛈️</div>
+        <div class="wx-temp">72°</div>
+      </div>
+      <div class="wx-sub">Thunderstorms · 90% chance of rain</div>
+      <div class="wx-detail">Thunderstorms possible. Some could be severe. High near 72.</div>
+    </div>
+    <div class="qt">
+      <div class="qt-label">Quote</div>
+      <div class="qt-text">"The divine is not something high above us. It is within us, and around us."</div>
+      <div class="qt-author">— Morihei Ueshiba</div>
+    </div>
+  </div>
+</div>
+
+<!-- SNOW -->
+<div class="condition-label">❄️ Snow</div>
+<div class="dash snow">
+  <div class="hdr">
+    <div class="hdr-title">JDU Dashboard</div>
+    <div class="hdr-date">Wednesday, April 30, 2026</div>
+  </div>
+  <div class="body">
+    <div class="wx">
+      <div class="wx-label">Today's Weather</div>
+      <div class="wx-icon-row">
+        <div class="wx-icon">❄️</div>
+        <div class="wx-temp">28°</div>
+      </div>
+      <div class="wx-sub">Snow · 70% chance of snow</div>
+      <div class="wx-detail">Heavy snow expected. Total accumulation 4 to 6 inches. High near 28.</div>
+    </div>
+    <div class="qt">
+      <div class="qt-label">Quote</div>
+      <div class="qt-text">"The divine is not something high above us. It is within us, and around us."</div>
+      <div class="qt-author">— Morihei Ueshiba</div>
+    </div>
+  </div>
+</div>
+
+<!-- CLOUDY -->
+<div class="condition-label">☁️ Cloudy</div>
+<div class="dash cloudy">
+  <div class="hdr">
+    <div class="hdr-title">JDU Dashboard</div>
+    <div class="hdr-date">Wednesday, April 30, 2026</div>
+  </div>
+  <div class="body">
+    <div class="wx">
+      <div class="wx-label">Today's Weather</div>
+      <div class="wx-icon-row">
+        <div class="wx-icon">☁️</div>
+        <div class="wx-temp">65°</div>
+      </div>
+      <div class="wx-sub">Cloudy · 20% chance of rain</div>
+      <div class="wx-detail">Mostly cloudy. High near 65. Northwest wind 5 to 10 mph.</div>
+    </div>
+    <div class="qt">
+      <div class="qt-label">Quote</div>
+      <div class="qt-text">"The divine is not something high above us. It is within us, and around us."</div>
+      <div class="qt-author">— Morihei Ueshiba</div>
+    </div>
+  </div>
+</div>
+
+<p class="subtitle">The subtitle under the icon is now 16px. Let me know if it needs to go bigger, or if any condition colors feel off.</p>

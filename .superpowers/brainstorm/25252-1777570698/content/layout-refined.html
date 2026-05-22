@@ -1,0 +1,76 @@
+<h2>Refined Layouts — One Per Display</h2>
+<p class="subtitle">Left: Joe's 800×480 (Option A revised — more forecast space). Right: Sam's 600×400 (Option B). Click each to approve.</p>
+
+<div class="split">
+
+  <!-- Joe's display: Option A refined -->
+  <div class="mockup">
+    <div class="mockup-header">Joe · 800×480 · Side by Side (revised)</div>
+    <div class="mockup-body" style="padding:12px;">
+      <div style="background:#1a1a2e;border-radius:6px;padding:12px;aspect-ratio:800/480;display:flex;flex-direction:column;font-family:sans-serif;color:#fff;box-sizing:border-box;">
+        <!-- Header bar -->
+        <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #444;padding-bottom:7px;margin-bottom:10px;">
+          <span style="font-size:11px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;">JDU Dashboard</span>
+          <span style="font-size:10px;opacity:0.6;">Wednesday · April 30, 2026 · 6:30 AM</span>
+        </div>
+        <!-- Two columns — weather gets more width -->
+        <div style="display:flex;flex:1;gap:10px;">
+          <!-- Weather panel: wider -->
+          <div style="flex:1.4;background:#16213e;border-radius:6px;padding:10px;display:flex;flex-direction:column;justify-content:space-between;">
+            <div style="font-size:9px;text-transform:uppercase;opacity:0.5;letter-spacing:1px;">Today's Weather</div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div style="font-size:32px;">☀️</div>
+              <div>
+                <div style="font-size:26px;font-weight:bold;color:#f5a623;">98°F</div>
+                <div style="font-size:9px;opacity:0.6;">Today · 5% precip</div>
+              </div>
+            </div>
+            <!-- Forecast gets its own space -->
+            <div style="font-size:10px;line-height:1.6;opacity:0.85;background:rgba(255,255,255,0.05);border-radius:4px;padding:7px;">
+              Sunny and hot throughout the day. Winds from the southwest at 10–15 mph. Overnight lows near 74°F.
+            </div>
+          </div>
+          <!-- Quote panel -->
+          <div style="flex:1.6;background:#0f3460;border-radius:6px;padding:10px;display:flex;flex-direction:column;justify-content:center;gap:8px;">
+            <div style="font-size:9px;text-transform:uppercase;opacity:0.5;letter-spacing:1px;">Quote</div>
+            <div style="font-size:11px;line-height:1.65;font-style:italic;opacity:0.95;">"The secret of getting ahead is getting started. Break your complex tasks into small manageable ones and attend to them one at a time."</div>
+            <div style="font-size:10px;opacity:0.5;text-align:right;">— Mark Twain</div>
+          </div>
+        </div>
+      </div>
+      <p style="font-size:11px;opacity:0.6;margin-top:8px;text-align:center;">Forecast text now has a dedicated box with full detail</p>
+    </div>
+  </div>
+
+  <!-- Sam's display: Option B -->
+  <div class="mockup">
+    <div class="mockup-header">Sam · 600×400 · Stacked</div>
+    <div class="mockup-body" style="padding:12px;">
+      <div style="background:#f5f0e8;border-radius:6px;padding:10px;aspect-ratio:600/400;display:flex;flex-direction:column;font-family:sans-serif;color:#1a1a1a;box-sizing:border-box;">
+        <!-- Big date header -->
+        <div style="text-align:center;border-bottom:2px solid #1a1a1a;padding-bottom:6px;margin-bottom:9px;">
+          <div style="font-size:14px;font-weight:bold;letter-spacing:2px;">WEDNESDAY, APRIL 30</div>
+          <div style="font-size:9px;opacity:0.4;">6:30 AM · Joy of My Life</div>
+        </div>
+        <!-- Weather strip -->
+        <div style="display:flex;align-items:center;gap:10px;background:#1a1a1a;color:#f5f0e8;border-radius:6px;padding:7px 10px;margin-bottom:9px;">
+          <div style="font-size:20px;">☀️</div>
+          <div>
+            <div style="font-size:17px;font-weight:bold;">98°F</div>
+            <div style="font-size:8px;opacity:0.6;">Today · 5% precip</div>
+          </div>
+          <div style="flex:1;font-size:8.5px;opacity:0.8;line-height:1.5;text-align:right;padding-left:6px;">Sunny and hot throughout the day. Winds from the southwest at 10–15 mph.</div>
+        </div>
+        <!-- Quote block -->
+        <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:4px 6px;">
+          <div style="font-size:11px;font-style:italic;line-height:1.65;text-align:center;">"The secret of getting ahead is getting started. Break your complex tasks into small manageable ones."</div>
+          <div style="font-size:9px;opacity:0.4;text-align:center;margin-top:7px;">— Mark Twain</div>
+        </div>
+      </div>
+      <p style="font-size:11px;opacity:0.6;margin-top:8px;text-align:center;">Compact but readable at 600×400</p>
+    </div>
+  </div>
+
+</div>
+
+<p class="subtitle" style="margin-top:20px;">Do both layouts look right? Next step: color themes for each profile.</p>

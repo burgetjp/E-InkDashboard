@@ -1,0 +1,101 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link rel="apple-touch-icon" sizes="76x76" href="../assets/img/apple-icon.png">
+<link rel="icon" type="image/png" href="../assets/img/favicon.png">
+<title>
+    Burgett Dashboard
+  </title>
+
+
+<link rel="canonical" href="https://www.creative-tim.com/product/material-dashboard" />
+
+<meta name="keywords" content="creative tim, html dashboard, html css dashboard, web dashboard, bootstrap 5 dashboard, bootstrap 5, css3 dashboard, bootstrap 5 admin, Material Dashboard bootstrap 5 dashboard, frontend, responsive bootstrap 5 dashboard, free dashboard, free admin dashboard, free bootstrap 5 admin dashboard">
+<meta name="description" content="Material Dashboard 2 is a beautiful Bootstrap 5 admin dashboard with a large number of components, designed to look beautiful and organized. If you are looking for a tool to manage and visualize data about your business, this dashboard is the thing for you.">
+
+<meta name="twitter:card" content="product">
+<meta name="twitter:site" content="@creativetim">
+<meta name="twitter:title" content="Material Dashboard 2 by Creative Tim">
+<meta name="twitter:description" content="Material Dashboard 2 is a beautiful Bootstrap 5 admin dashboard with a large number of components, designed to look beautiful and organized. If you are looking for a tool to manage and visualize data about your business, this dashboard is the thing for you.">
+<meta name="twitter:creator" content="@creativetim">
+<meta name="twitter:image" content="https://s3.amazonaws.com/creativetim_bucket/products/450/original/material-dashboard.jpg">
+
+<meta property="fb:app_id" content="655968634437471">
+<meta property="og:title" content="Material Dashboard 2 by Creative Tim" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://demos.creative-tim.com/material-dashboard/pages/dashboard.html" />
+<meta property="og:image" content="https://s3.amazonaws.com/creativetim_bucket/products/450/original/material-dashboard.jpg" />
+<meta property="og:description" content="Material Dashboard 2 is a beautiful Bootstrap 5 admin dashboard with a large number of components, designed to look beautiful and organized. If you are looking for a tool to manage and visualize data about your business, this dashboard is the thing for you." />
+<meta property="og:site_name" content="Creative Tim" />
+
+<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
+
+
+<link href="styles/nucleo-icons.css" rel="stylesheet" />
+<link href="styles/nucleo-svg.css" rel="stylesheet" />
+
+<script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+
+<!--link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"-->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,300,0,0" />
+
+<link id="pagestyle" href="styles/material-dashboard-jdu.min.css?v=3.1.0" rel="stylesheet" />
+
+</head>
+<body class="g-sidenav-show bg-gray-400">
+
+<main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg bg-gray-400">
+
+<nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur" data-scroll="true">
+<div class="container-fluid py-1 px-2">
+<h6 class="font-weight-bolder mb-0">JDU Dashboard (<%=todayDate%>)</h6>
+</nav>
+
+<div class="container-fluid py-4">
+<div class="row">
+<div class="col-xl-3 col-sm-12 mb-xl-0 mb-4">
+<div class="card">
+<div class="card-header p-3 pt-2">
+<div class="icon icon-lg icon-shape bg-gradient-dark shadow-dark text-center border-radius-xl mt-n4 position-absolute">
+<i class="material-symbols-outlined opacity-10"><%=forecastIcon%></i>
+
+</div>
+<div class="text-end pt-1">
+<h5 class="mb-0 text-capitalize"><%=day%>'s Temp</h5>
+<h4 class="mb-0"><%=highTemperature%></h4>
+</div>
+</div>
+<hr class="dark horizontal my-0">
+<div class="card-footer p-3">
+<p class="mb-0"><span class="text-success text-xl font-weight-bolder"><%=day%>'s Forecast </span><h6 class="mb-0"><%=shortForecast%></h6></p>
+</div>
+</div>
+</div>
+
+<div class="col-xl-3 col-sm-12">
+<div class="card">
+<div class="card-header p-3 pt-2">
+<div class="icon icon-lg icon-shape bg-gradient-warning shadow-info text-center border-radius-xl mt-n4 position-absolute">
+<i class="material-symbols-outlined opacity-10">newspaper</i>
+</div>
+<div class="text-end pt-4">
+<h5 class="mb-0 text-capitalize">Inspirational Quote</h5>
+<!--h4 class="mb-0">$103,430</h4-->
+<h7 class="mb-0"><%=fullQuote%></h7>
+</div>
+</div>
+<hr class="dark horizontal my-0">
+<div class="card-footer p-3">
+<p class="mb-0"><span class="text-success text-xl font-weight-bolder">By </span><h7 class="mb-0"><%=fullAuthor%></h7></p>
+</div>
+</div>
+</div>
+</div>
+
+</main>
+
+</body>
+</html>

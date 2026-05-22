@@ -1,0 +1,10 @@
+services:
+  inky-dashboard:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+      - NOAA_GRID=PSR/166,61
+      - REFRESH_HOUR_INTERVAL=1

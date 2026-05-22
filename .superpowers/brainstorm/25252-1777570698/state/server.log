@@ -1,0 +1,15 @@
+{"type":"server-started","port":54160,"host":"127.0.0.1","url_host":"localhost","url":"http://localhost:54160","screen_dir":"/Users/joeburgett/Working/E-InkDashboard/.superpowers/brainstorm/25252-1777570698/content","state_dir":"/Users/joeburgett/Working/E-InkDashboard/.superpowers/brainstorm/25252-1777570698/state"}
+{"type":"screen-added","file":"/Users/joeburgett/Working/E-InkDashboard/.superpowers/brainstorm/25252-1777570698/content/layout-options.html"}
+{"type":"screen-added","file":"/Users/joeburgett/Working/E-InkDashboard/.superpowers/brainstorm/25252-1777570698/content/layout-refined.html"}
+{"type":"screen-added","file":"/Users/joeburgett/Working/E-InkDashboard/.superpowers/brainstorm/25252-1777570698/content/sam-layouts.html"}
+{"type":"screen-added","file":"/Users/joeburgett/Working/E-InkDashboard/.superpowers/brainstorm/25252-1777570698/content/joe-colors.html"}
+{"type":"screen-added","file":"/Users/joeburgett/Working/E-InkDashboard/.superpowers/brainstorm/25252-1777570698/content/joe-colors-light.html"}
+{"type":"screen-added","file":"/Users/joeburgett/Working/E-InkDashboard/.superpowers/brainstorm/25252-1777570698/content/sam-colors.html"}
+{"type":"screen-added","file":"/Users/joeburgett/Working/E-InkDashboard/.superpowers/brainstorm/25252-1777570698/content/waiting-1.html"}
+{"type":"screen-added","file":"/Users/joeburgett/Working/E-InkDashboard/.superpowers/brainstorm/25252-1777570698/content/live-preview.html"}
+{"type":"screen-added","file":"/Users/joeburgett/Working/E-InkDashboard/.superpowers/brainstorm/25252-1777570698/content/live-preview-fullscale.html"}
+{"type":"screen-added","file":"/Users/joeburgett/Working/E-InkDashboard/.superpowers/brainstorm/25252-1777570698/content/icon-options.html"}
+{"type":"screen-added","file":"/Users/joeburgett/Working/E-InkDashboard/.superpowers/brainstorm/25252-1777570698/content/icon-sets.html"}
+{"type":"screen-added","file":"/Users/joeburgett/Working/E-InkDashboard/.superpowers/brainstorm/25252-1777570698/content/waiting-2.html"}
+{"type":"screen-added","file":"/Users/joeburgett/Working/E-InkDashboard/.superpowers/brainstorm/25252-1777570698/content/icon-mapping.html"}
+{"type":"server-stopped","reason":"idle timeout"}

@@ -1,0 +1,107 @@
+<h2>Weather Icon Set Options</h2>
+<p class="subtitle">Four sets shown with the same 8 conditions. All are free, open source, and work with Pillow as bundled PNGs.</p>
+
+<style>
+  .icon-grid { display:flex; flex-wrap:wrap; gap:10px; margin:12px 0; }
+  .icon-item { display:flex; flex-direction:column; align-items:center; gap:4px; width:64px; }
+  .icon-item img { width:52px; height:52px; object-fit:contain; }
+  .icon-item span { font-size:9px; text-align:center; opacity:0.55; line-height:1.2; }
+</style>
+
+<div class="options">
+
+  <!-- Set 1: Basmilius Weather Icons -->
+  <div class="option" data-choice="bas" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Basmilius Weather Icons</h3>
+      <p>Hand-crafted, vibrant, layered style. Very polished — used in major weather apps. MIT licensed.</p>
+      <div class="icon-grid">
+        <div class="icon-item"><img src="https://raw.githubusercontent.com/basmilius/weather-icons/dev/production/fill/svg/clear-day.svg"/><span>Sunny</span></div>
+        <div class="icon-item"><img src="https://raw.githubusercontent.com/basmilius/weather-icons/dev/production/fill/svg/partly-cloudy-day.svg"/><span>Pt. Cloudy</span></div>
+        <div class="icon-item"><img src="https://raw.githubusercontent.com/basmilius/weather-icons/dev/production/fill/svg/overcast-day.svg"/><span>Cloudy</span></div>
+        <div class="icon-item"><img src="https://raw.githubusercontent.com/basmilius/weather-icons/dev/production/fill/svg/rain.svg"/><span>Rain</span></div>
+        <div class="icon-item"><img src="https://raw.githubusercontent.com/basmilius/weather-icons/dev/production/fill/svg/thunderstorms.svg"/><span>Storm</span></div>
+        <div class="icon-item"><img src="https://raw.githubusercontent.com/basmilius/weather-icons/dev/production/fill/svg/snow.svg"/><span>Snow</span></div>
+        <div class="icon-item"><img src="https://raw.githubusercontent.com/basmilius/weather-icons/dev/production/fill/svg/clear-night.svg"/><span>Clear Night</span></div>
+        <div class="icon-item"><img src="https://raw.githubusercontent.com/basmilius/weather-icons/dev/production/fill/svg/fog.svg"/><span>Fog</span></div>
+      </div>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul><li>Most polished & detailed</li><li>Day + night variants</li><li>200+ icons (great coverage)</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>Complex SVGs — need rasterizing to PNG for Pillow</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Set 2: Visual Crossing 1st Color -->
+  <div class="option" data-choice="vc1" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Visual Crossing — Set 1</h3>
+      <p>Clean, modern flat design. Available directly as PNG — zero conversion needed. LGPL licensed.</p>
+      <div class="icon-grid">
+        <div class="icon-item"><img src="https://raw.githubusercontent.com/visualcrossing/WeatherIcons/main/PNG/1st%20Set%20-%20Color/clear-day.png"/><span>Sunny</span></div>
+        <div class="icon-item"><img src="https://raw.githubusercontent.com/visualcrossing/WeatherIcons/main/PNG/1st%20Set%20-%20Color/partly-cloudy-day.png"/><span>Pt. Cloudy</span></div>
+        <div class="icon-item"><img src="https://raw.githubusercontent.com/visualcrossing/WeatherIcons/main/PNG/1st%20Set%20-%20Color/cloudy.png"/><span>Cloudy</span></div>
+        <div class="icon-item"><img src="https://raw.githubusercontent.com/visualcrossing/WeatherIcons/main/PNG/1st%20Set%20-%20Color/rain.png"/><span>Rain</span></div>
+        <div class="icon-item"><img src="https://raw.githubusercontent.com/visualcrossing/WeatherIcons/main/PNG/1st%20Set%20-%20Color/thunder-rain.png"/><span>Storm</span></div>
+        <div class="icon-item"><img src="https://raw.githubusercontent.com/visualcrossing/WeatherIcons/main/PNG/1st%20Set%20-%20Color/snow.png"/><span>Snow</span></div>
+        <div class="icon-item"><img src="https://raw.githubusercontent.com/visualcrossing/WeatherIcons/main/PNG/1st%20Set%20-%20Color/clear-night.png"/><span>Clear Night</span></div>
+        <div class="icon-item"><img src="https://raw.githubusercontent.com/visualcrossing/WeatherIcons/main/PNG/1st%20Set%20-%20Color/fog.png"/><span>Fog</span></div>
+      </div>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul><li>Ready-to-use PNG — drop straight in</li><li>Day + night variants</li><li>Maps to NOAA conditions cleanly</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>22 icons only (sufficient for NOAA)</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Set 3: Visual Crossing 2nd Color -->
+  <div class="option" data-choice="vc2" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Visual Crossing — Set 2</h3>
+      <p>Bolder, more illustrative style. Same PNG-ready format, same coverage. LGPL licensed.</p>
+      <div class="icon-grid">
+        <div class="icon-item"><img src="https://raw.githubusercontent.com/visualcrossing/WeatherIcons/main/PNG/2nd%20Set%20-%20Color/clear-day.png"/><span>Sunny</span></div>
+        <div class="icon-item"><img src="https://raw.githubusercontent.com/visualcrossing/WeatherIcons/main/PNG/2nd%20Set%20-%20Color/partly-cloudy-day.png"/><span>Pt. Cloudy</span></div>
+        <div class="icon-item"><img src="https://raw.githubusercontent.com/visualcrossing/WeatherIcons/main/PNG/2nd%20Set%20-%20Color/cloudy.png"/><span>Cloudy</span></div>
+        <div class="icon-item"><img src="https://raw.githubusercontent.com/visualcrossing/WeatherIcons/main/PNG/2nd%20Set%20-%20Color/rain.png"/><span>Rain</span></div>
+        <div class="icon-item"><img src="https://raw.githubusercontent.com/visualcrossing/WeatherIcons/main/PNG/2nd%20Set%20-%20Color/thunder-rain.png"/><span>Storm</span></div>
+        <div class="icon-item"><img src="https://raw.githubusercontent.com/visualcrossing/WeatherIcons/main/PNG/2nd%20Set%20-%20Color/snow.png"/><span>Snow</span></div>
+        <div class="icon-item"><img src="https://raw.githubusercontent.com/visualcrossing/WeatherIcons/main/PNG/2nd%20Set%20-%20Color/clear-night.png"/><span>Clear Night</span></div>
+        <div class="icon-item"><img src="https://raw.githubusercontent.com/visualcrossing/WeatherIcons/main/PNG/2nd%20Set%20-%20Color/fog.png"/><span>Fog</span></div>
+      </div>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul><li>Bold, high-visibility on e-ink</li><li>Ready-to-use PNG</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>Busier style may not suit minimal layouts</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Set 4: Visual Crossing 4th Color -->
+  <div class="option" data-choice="vc4" onclick="toggleSelect(this)">
+    <div class="letter">D</div>
+    <div class="content">
+      <h3>Visual Crossing — Set 4</h3>
+      <p>Softer, more rounded and friendly style. Warmer palette — pairs nicely with Sam's lavender theme.</p>
+      <div class="icon-grid">
+        <div class="icon-item"><img src="https://raw.githubusercontent.com/visualcrossing/WeatherIcons/main/PNG/4th%20Set%20-%20Color/clear-day.png"/><span>Sunny</span></div>
+        <div class="icon-item"><img src="https://raw.githubusercontent.com/visualcrossing/WeatherIcons/main/PNG/4th%20Set%20-%20Color/partly-cloudy-day.png"/><span>Pt. Cloudy</span></div>
+        <div class="icon-item"><img src="https://raw.githubusercontent.com/visualcrossing/WeatherIcons/main/PNG/4th%20Set%20-%20Color/cloudy.png"/><span>Cloudy</span></div>
+        <div class="icon-item"><img src="https://raw.githubusercontent.com/visualcrossing/WeatherIcons/main/PNG/4th%20Set%20-%20Color/rain.png"/><span>Rain</span></div>
+        <div class="icon-item"><img src="https://raw.githubusercontent.com/visualcrossing/WeatherIcons/main/PNG/4th%20Set%20-%20Color/thunder-rain.png"/><span>Storm</span></div>
+        <div class="icon-item"><img src="https://raw.githubusercontent.com/visualcrossing/WeatherIcons/main/PNG/4th%20Set%20-%20Color/snow.png"/><span>Snow</span></div>
+        <div class="icon-item"><img src="https://raw.githubusercontent.com/visualcrossing/WeatherIcons/main/PNG/4th%20Set%20-%20Color/clear-night.png"/><span>Clear Night</span></div>
+        <div class="icon-item"><img src="https://raw.githubusercontent.com/visualcrossing/WeatherIcons/main/PNG/4th%20Set%20-%20Color/fog.png"/><span>Fog</span></div>
+      </div>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul><li>Warm, friendly feel</li><li>Ready-to-use PNG</li><li>Softer colors render well on e-ink</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>Less sharp than Set 1</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<p class="subtitle" style="margin-top:16px;">My recommendation: <strong>A (Basmilius)</strong> for best quality, or <strong>B (VC Set 1)</strong> for simplest integration. Both use the same icon filenames so switching later is easy.</p>

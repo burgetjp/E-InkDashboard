@@ -1,0 +1,61 @@
+from __future__ import annotations
+
+import logging
+
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.triggers.cron import CronTrigger
+
+from app.cache import DashboardCache, cache as _default_cache
+from app.icons import load_all_icons
+from app.quotes import fetch_quote
+from app.render_joe import render_joe
+from app.render_sam import render_sam
+from app.weather import fetch_weather
+
+logger = logging.getLogger(__name__)
+
+scheduler = AsyncIOScheduler()
+
+
+async def refresh_dashboard(
+    cache: DashboardCache = _default_cache,
+    noaa_grid: str = "PSR/166,61",
+) -> None:
+    icons = load_all_icons(size=120)
+
+    weather = None
+    noaa_ok = False
+    try:
+        weather = await fetch_weather(noaa_grid)
+        noaa_ok = True
+    except Exception as exc:
+        logger.warning("NOAA fetch failed: %s", exc)
+
+    quote = None
+    quotes_ok = False
+    try:
+        quote = await fetch_quote()
+        quotes_ok = True
+    except Exception as exc:
+        logger.warning("ZenQuotes fetch failed: %s", exc)
+
+    if weather is None or quote is None:
+        # Keep previous cached PNGs; update status flags only
+        cache.noaa_ok = noaa_ok
+        cache.quotes_ok = quotes_ok
+        return
+
+    joe_png = render_joe(weather, quote, icons)
+    sam_png = render_sam(weather, quote, icons)
+    cache.store(joe_png, sam_png, noaa_ok=noaa_ok, quotes_ok=quotes_ok)
+
+
+def start_scheduler(noaa_grid: str = "PSR/166,61") -> None:
+    scheduler.add_job(
+        refresh_dashboard,
+        CronTrigger(minute=0),
+        kwargs={"noaa_grid": noaa_grid},
+        id="refresh_dashboard",
+        replace_existing=True,
+    )
+    scheduler.start()

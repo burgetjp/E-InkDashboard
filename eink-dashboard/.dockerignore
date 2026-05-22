@@ -1,0 +1,10 @@
+venv/
+tests/
+pi/
+pytest.ini
+CLAUDE.md
+.gitignore
+.git/
+__pycache__/
+*.pyc
+.pytest_cache/

@@ -1,0 +1,80 @@
+<h2>Weather Icon Options</h2>
+<p class="subtitle">Three approaches — from simplest to most expressive. Each shows the full set of conditions we'd support.</p>
+
+<div class="options">
+
+  <!-- Option 1: Emoji -->
+  <div class="option" data-choice="icon-emoji" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Emoji — Simple & Zero Setup</h3>
+      <p>Use Unicode weather emoji via a bundled font. No extra files, renders instantly. Limited to ~6 states.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;font-size:28px;line-height:1;">
+        <span title="Sunny">☀️</span>
+        <span title="Partly Cloudy Day">⛅</span>
+        <span title="Partly Cloudy Night">🌛</span>
+        <span title="Cloudy">☁️</span>
+        <span title="Rain">🌧️</span>
+        <span title="Thunderstorm">⛈️</span>
+        <span title="Snow">❄️</span>
+        <span title="Fog">🌫️</span>
+      </div>
+      <p style="margin-top:10px;font-size:12px;opacity:0.6;">Emoji rendering in Pillow requires a color emoji font (Noto Color Emoji ~10MB) bundled in Docker. Crisp at large sizes.</p>
+      <div class="pros-cons" style="margin-top:10px;">
+        <div class="pros"><h4>Pros</h4><ul><li>No extra API calls</li><li>Works offline</li><li>Familiar, colorful</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>Large font file in Docker</li><li>Emoji style may feel informal</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Option 2: NOAA's own icons -->
+  <div class="option" data-choice="icon-noaa" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>NOAA Icons — Automatic & Always Accurate</h3>
+      <p>NOAA returns an icon URL with every forecast. We fetch that image and composite it directly into the PNG. Zero mapping logic — NOAA picks the right icon.</p>
+      <div style="display:flex;align-items:center;gap:16px;margin-top:12px;">
+        <img src="https://api.weather.gov/icons/land/day/few?size=medium" style="width:60px;height:60px;" title="Sunny (live from NOAA)" />
+        <img src="https://api.weather.gov/icons/land/day/sct?size=medium" style="width:60px;height:60px;" title="Partly Cloudy" />
+        <img src="https://api.weather.gov/icons/land/day/rain?size=medium" style="width:60px;height:60px;" title="Rain" />
+        <img src="https://api.weather.gov/icons/land/day/tsra?size=medium" style="width:60px;height:60px;" title="Thunderstorm" />
+        <img src="https://api.weather.gov/icons/land/day/snow?size=medium" style="width:60px;height:60px;" title="Snow" />
+        <img src="https://api.weather.gov/icons/land/night/few?size=medium" style="width:60px;height:60px;" title="Clear Night" />
+        <span style="font-size:12px;opacity:0.5;font-style:italic;">← These are live NOAA icons</span>
+      </div>
+      <p style="margin-top:10px;font-size:12px;opacity:0.6;">86×86px PNG, fetched during the hourly data refresh alongside weather data. Cached with the rest of the weather response. One extra HTTP call per hour.</p>
+      <div class="pros-cons" style="margin-top:10px;">
+        <div class="pros"><h4>Pros</h4><ul><li>Always matches forecast exactly</li><li>Covers every condition automatically</li><li>No mapping logic to maintain</li><li>Small file, no extra Docker deps</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>NOAA's icon style is dated/government</li><li>Fails if NOAA CDN is down (rare)</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Option 3: Bundled custom icon set -->
+  <div class="option" data-choice="icon-custom" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Custom Icon Set — Best Looking, Most Control</h3>
+      <p>Bundle a small set of clean, minimal weather icons as PNGs (e.g. from <a href="https://erikflowers.github.io/weather-icons/" target="_blank">Erik Flowers Weather Icons</a> or similar). Map from NOAA's <code>shortForecast</code> text. ~10 icons covers 95% of conditions.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;">
+        <div style="background:#e8f0fe;border-radius:6px;padding:8px 12px;font-size:12px;text-align:center;"><div style="font-size:22px;">🌤</div>Sunny</div>
+        <div style="background:#e8f0fe;border-radius:6px;padding:8px 12px;font-size:12px;text-align:center;"><div style="font-size:22px;">⛅</div>Pt. Cloudy</div>
+        <div style="background:#e8f0fe;border-radius:6px;padding:8px 12px;font-size:12px;text-align:center;"><div style="font-size:22px;">☁️</div>Cloudy</div>
+        <div style="background:#e8f0fe;border-radius:6px;padding:8px 12px;font-size:12px;text-align:center;"><div style="font-size:22px;">🌧️</div>Rain</div>
+        <div style="background:#e8f0fe;border-radius:6px;padding:8px 12px;font-size:12px;text-align:center;"><div style="font-size:22px;">⛈️</div>Storm</div>
+        <div style="background:#e8f0fe;border-radius:6px;padding:8px 12px;font-size:12px;text-align:center;"><div style="font-size:22px;">❄️</div>Snow</div>
+        <div style="background:#e8f0fe;border-radius:6px;padding:8px 12px;font-size:12px;text-align:center;"><div style="font-size:22px;">🌫️</div>Fog</div>
+        <div style="background:#e8f0fe;border-radius:6px;padding:8px 12px;font-size:12px;text-align:center;"><div style="font-size:22px;">🌑</div>Clear Night</div>
+        <div style="background:#e8f0fe;border-radius:6px;padding:8px 12px;font-size:12px;text-align:center;"><div style="font-size:22px;">🌨️</div>Sleet</div>
+        <div style="background:#e8f0fe;border-radius:6px;padding:8px 12px;font-size:12px;text-align:center;"><div style="font-size:22px;">🌬️</div>Windy</div>
+      </div>
+      <div class="pros-cons" style="margin-top:10px;">
+        <div class="pros"><h4>Pros</h4><ul><li>Best visual quality</li><li>Full offline, no CDN dependency</li><li>Cohesive design language</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>Requires mapping NOAA text → icon</li><li>Small maintenance if NOAA adds new conditions</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<p class="subtitle" style="margin-top:16px;"><strong>My recommendation: B (NOAA icons)</strong> — zero maintenance, always correct, one extra HTTP call per hour. But if the government-style look bothers you, C gives full control.</p>

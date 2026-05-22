@@ -1,0 +1,162 @@
+<h2>Three Fresh Directions — Joe's Display (800×480)</h2>
+<p class="subtitle">All built on the Inky Impression's native 7-color palette: black, white, red, yellow, green, blue, orange. No dithering needed.</p>
+
+<style>
+  .dash-grid { display: flex; flex-direction: column; gap: 32px; margin: 20px 0; }
+
+  /* Scale: 800x480 → 640x384 (80%) */
+  .dash { width: 640px; height: 384px; position: relative; font-family: 'Inter', system-ui, sans-serif; overflow: hidden; border: 2px solid #333; border-radius: 4px; cursor: pointer; transition: box-shadow 0.2s; }
+  .dash:hover { box-shadow: 0 0 0 3px #fff; }
+  .dash.selected { box-shadow: 0 0 0 3px #4ade80; }
+  .dash-label { margin-top: 10px; font-size: 13px; }
+  .dash-label strong { color: #fff; }
+  .dash-label span { color: #888; font-size: 11px; margin-left: 8px; }
+
+  /* ── A: DARK MODE ── */
+  .dash-a { background: #000; color: #fff; }
+  .dash-a .hdr { display:flex; justify-content:space-between; align-items:center; padding: 8px 14px; border-bottom: 1px solid #333; }
+  .dash-a .hdr-title { font-size: 13px; font-weight: 700; letter-spacing: 2px; color: #fff; }
+  .dash-a .hdr-date { font-size: 10px; color: #888; }
+  .dash-a .body { display:flex; height: calc(384px - 36px); }
+  .dash-a .wx { flex: 1.4; padding: 14px; border-right: 1px solid #222; display:flex; flex-direction:column; gap:8px; }
+  .dash-a .wx-label { font-size: 9px; letter-spacing: 2px; color: #555; font-weight:700; }
+  .dash-a .wx-icon-row { display:flex; align-items:center; gap:12px; }
+  .dash-a .wx-icon { width:60px; height:60px; background:#ffe900; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:28px; }
+  .dash-a .wx-temp { font-size: 52px; font-weight:900; color: #ffe900; line-height:1; }
+  .dash-a .wx-sub { font-size: 10px; color: #555; }
+  .dash-a .wx-detail { background: #111; border-radius: 4px; padding: 8px; font-size: 9px; color: #888; line-height: 1.5; margin-top: auto; }
+  .dash-a .qt { flex: 1.6; padding: 14px; display:flex; flex-direction:column; gap:8px; }
+  .dash-a .qt-label { font-size: 9px; letter-spacing: 2px; color: #555; font-weight:700; }
+  .dash-a .qt-text { font-size: 13px; color: #ddd; line-height: 1.6; font-style:italic; flex:1; }
+  .dash-a .qt-author { font-size: 10px; color: #555; text-align:right; }
+
+  /* ── B: BOLD SPLIT ── */
+  .dash-b { background: #fff; }
+  .dash-b .hdr { background:#00439c; display:flex; justify-content:space-between; align-items:center; padding: 8px 14px; }
+  .dash-b .hdr-title { font-size: 13px; font-weight:700; color:#fff; letter-spacing:1px; }
+  .dash-b .hdr-date { font-size: 10px; color: rgba(255,255,255,0.6); }
+  .dash-b .body { display:flex; height: calc(384px - 36px); }
+  .dash-b .wx { flex: 1.4; background: #00439c; padding: 14px; display:flex; flex-direction:column; gap:8px; }
+  .dash-b .wx-label { font-size: 9px; letter-spacing: 2px; color: rgba(255,255,255,0.5); font-weight:700; }
+  .dash-b .wx-icon-row { display:flex; align-items:center; gap:12px; }
+  .dash-b .wx-icon { width:60px; height:60px; background:#ffe900; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:28px; }
+  .dash-b .wx-temp { font-size: 52px; font-weight:900; color: #ffe900; line-height:1; }
+  .dash-b .wx-sub { font-size: 10px; color: rgba(255,255,255,0.5); }
+  .dash-b .wx-detail { background: rgba(0,0,0,0.3); border-radius: 4px; padding: 8px; font-size: 9px; color: rgba(255,255,255,0.7); line-height: 1.5; margin-top:auto; }
+  .dash-b .qt { flex: 1.6; padding: 14px; display:flex; flex-direction:column; gap:8px; }
+  .dash-b .qt-label { font-size: 9px; letter-spacing: 2px; color: #bbb; font-weight:700; }
+  .dash-b .qt-text { font-size: 13px; color: #222; line-height: 1.6; font-style:italic; flex:1; }
+  .dash-b .qt-author { font-size: 10px; color: #888; text-align:right; }
+
+  /* ── C: MINIMAL / TYPE-FORWARD ── */
+  .dash-c { background: #fff; }
+  .dash-c .hdr { display:flex; justify-content:space-between; align-items:center; padding: 8px 14px; border-bottom: 3px solid #000; }
+  .dash-c .hdr-title { font-size: 13px; font-weight:900; color:#000; letter-spacing:3px; text-transform:uppercase; }
+  .dash-c .hdr-date { font-size: 10px; color: #888; }
+  .dash-c .body { display:flex; height: calc(384px - 40px); }
+  .dash-c .wx { flex: 1.4; padding: 14px; border-right: 3px solid #000; display:flex; flex-direction:column; gap:6px; }
+  .dash-c .wx-label { font-size: 9px; letter-spacing: 2px; color: #aaa; font-weight:700; }
+  .dash-c .wx-icon-row { display:flex; align-items:center; gap:12px; }
+  .dash-c .wx-icon { width:56px; height:56px; background:#fff; border: 3px solid #000; border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:26px; }
+  .dash-c .wx-temp { font-size: 56px; font-weight:900; color: #b60000; line-height:1; }
+  .dash-c .wx-sub { font-size: 10px; color: #aaa; }
+  .dash-c .wx-detail { border: 2px solid #eee; border-radius: 4px; padding: 8px; font-size: 9px; color: #666; line-height: 1.5; margin-top:auto; }
+  .dash-c .qt { flex: 1.6; padding: 14px; display:flex; flex-direction:column; gap:8px; }
+  .dash-c .qt-label { font-size: 9px; letter-spacing: 2px; color: #aaa; font-weight:700; }
+  .dash-c .qt-text { font-size: 14px; color: #000; line-height: 1.6; font-style:italic; flex:1; }
+  .dash-c .qt-author { font-size: 10px; color: #aaa; text-align:right; }
+</style>
+
+<script>
+  function selectDash(el, choice) {
+    document.querySelectorAll('.dash').forEach(d => d.classList.remove('selected'));
+    el.classList.add('selected');
+    if (window.recordChoice) recordChoice(choice, el.closest('.dash-label')?.querySelector('strong')?.textContent || choice);
+  }
+</script>
+
+<div class="dash-grid">
+
+  <!-- A: Dark Mode -->
+  <div>
+    <div class="dash dash-a" onclick="selectDash(this,'A')" data-choice="A">
+      <div class="hdr">
+        <div class="hdr-title">JDU DASHBOARD</div>
+        <div class="hdr-date">Wed · Apr 30, 2026 · 6:30 PM</div>
+      </div>
+      <div class="body">
+        <div class="wx">
+          <div class="wx-label">TODAY'S WEATHER</div>
+          <div class="wx-icon-row">
+            <div class="wx-icon">☀️</div>
+            <div class="wx-temp">91°</div>
+          </div>
+          <div class="wx-sub">Today · 3% rain</div>
+          <div class="wx-detail">Sunny. High near 91. Southwest wind around 5 to 10 mph.</div>
+        </div>
+        <div class="qt">
+          <div class="qt-label">QUOTE</div>
+          <div class="qt-text">"The divine is not something high above us. It is within us, and around us."</div>
+          <div class="qt-author">— Morihei Ueshiba</div>
+        </div>
+      </div>
+    </div>
+    <div class="dash-label"><strong>A — Dark Mode</strong><span>Black bg · yellow temp · white text · no dithering</span></div>
+  </div>
+
+  <!-- B: Bold Split -->
+  <div>
+    <div class="dash dash-b" onclick="selectDash(this,'B')" data-choice="B">
+      <div class="hdr">
+        <div class="hdr-title">JDU Dashboard</div>
+        <div class="hdr-date">Wed · Apr 30, 2026 · 6:30 PM</div>
+      </div>
+      <div class="body">
+        <div class="wx">
+          <div class="wx-label">TODAY'S WEATHER</div>
+          <div class="wx-icon-row">
+            <div class="wx-icon">☀️</div>
+            <div class="wx-temp">91°</div>
+          </div>
+          <div class="wx-sub">Today · 3% rain</div>
+          <div class="wx-detail">Sunny. High near 91. Southwest wind around 5 to 10 mph.</div>
+        </div>
+        <div class="qt">
+          <div class="qt-label">QUOTE</div>
+          <div class="qt-text">"The divine is not something high above us. It is within us, and around us."</div>
+          <div class="qt-author">— Morihei Ueshiba</div>
+        </div>
+      </div>
+    </div>
+    <div class="dash-label"><strong>B — Bold Split</strong><span>Blue header + weather panel · white quote side · yellow temp</span></div>
+  </div>
+
+  <!-- C: Minimal -->
+  <div>
+    <div class="dash dash-c" onclick="selectDash(this,'C')" data-choice="C">
+      <div class="hdr">
+        <div class="hdr-title">JDU Dashboard</div>
+        <div class="hdr-date">Wed · Apr 30, 2026 · 6:30 PM</div>
+      </div>
+      <div class="body">
+        <div class="wx">
+          <div class="wx-label">TODAY'S WEATHER</div>
+          <div class="wx-icon-row">
+            <div class="wx-icon">☀️</div>
+            <div class="wx-temp">91°</div>
+          </div>
+          <div class="wx-sub">Sunny · 3% rain</div>
+          <div class="wx-detail">Sunny. High near 91. Southwest wind around 5 to 10 mph.</div>
+        </div>
+        <div class="qt">
+          <div class="qt-label">QUOTE</div>
+          <div class="qt-text">"The divine is not something high above us. It is within us, and around us."</div>
+          <div class="qt-author">— Morihei Ueshiba</div>
+        </div>
+      </div>
+    </div>
+    <div class="dash-label"><strong>C — Minimal / Type-Forward</strong><span>White bg · black structure · red temp · no colored panels</span></div>
+  </div>
+
+</div>
+<p class="subtitle">Click a design to select it, then tell me what you think in the terminal.</p>

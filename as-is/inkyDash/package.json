@@ -1,0 +1,19 @@
+{
+  "name": "inkyDash",
+  "version": "1.0.0",
+  "description": "Dashboard for inky display",
+  "main": "inkyDash.js",
+  "scripts": {
+    "start": "node inkyDash.js",
+    "dev": "nodemon inkyDash.js"
+  },
+  "author": "Joe Burgett",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2",
+    "request": "^2.88.2"
+  }
+}
