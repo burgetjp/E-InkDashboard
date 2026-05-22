@@ -200,7 +200,49 @@ def _draw_weather_panel(
     fg: str,
     accent: str,
 ) -> None:
-    raise NotImplementedError
+    """Draw Zone C/Left: Of the Weather."""
+    pad = 12
+    inner_x = x + pad
+    inner_w = w - 2 * pad
+    cy = y + pad
+
+    f_label = _vfont(JETBRAINS, 13, 500)
+    draw.text((inner_x, cy), "OF THE WEATHER", font=f_label, fill=accent)
+    cy += 18
+    draw.line([(inner_x, cy), (x + w - pad, cy)], fill=fg, width=1)
+    cy += 10
+
+    icon_size = 70
+    icon_name = select_icon_name(weather.short_forecast, weather.period_name)
+    raw = icons.get(icon_name) or icons.get("clear-day")
+    if raw is None:
+        raw = Image.new("RGBA", (icon_size, icon_size), (150, 150, 150, 255))
+    icon_img = raw.resize((icon_size, icon_size), Image.LANCZOS)
+    img.paste(icon_img, (inner_x, cy), icon_img)
+
+    temp_x = inner_x + icon_size + 12
+    f_temp = _vfont(SOURCE_SERIF, 120, 700)
+    draw.text((temp_x, cy), str(weather.temperature), font=f_temp, fill=accent, anchor="lt")
+
+    temp_bbox = draw.textbbox((temp_x, cy), str(weather.temperature), font=f_temp)
+    f_deg = _vfont(SOURCE_SERIF, 40, 700)
+    draw.text((temp_bbox[2] + 2, cy + 4), "°", font=f_deg, fill=accent, anchor="lt")
+
+    cy += max(icon_size, 90) + 12
+
+    stat = f"{weather.short_forecast.upper()} · {weather.precip_percent}% RAIN"
+    f_stat = _vfont(JETBRAINS, 13, 400)
+    draw.text((inner_x, cy), stat, font=f_stat, fill=fg)
+    cy += 22
+
+    desc = weather.detailed_forecast
+    if len(desc) > 120:
+        desc = desc[:117].rstrip() + "…"
+    f_desc = _vfont(SOURCE_SERIF_ITALIC, 15, 400)
+    desc_lines = wrap_text(draw, desc, f_desc, max_width=inner_w)
+    for line in desc_lines[:3]:
+        draw.text((inner_x, cy), line, font=f_desc, fill=fg)
+        cy += 22
 
 
 def _draw_quote_panel(
