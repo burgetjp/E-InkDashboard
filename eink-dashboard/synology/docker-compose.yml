@@ -1,6 +1,6 @@
 services:
   inky-dashboard:
-    build: .
+    image: inky-dashboard:latest
     restart: unless-stopped
     ports:
       - "8000:8000"
