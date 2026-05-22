@@ -256,7 +256,59 @@ def _draw_quote_panel(
     fg: str,
     accent: str,
 ) -> None:
-    raise NotImplementedError
+    """Draw Zone C/Right: Of the Mind (quote with drop-cap)."""
+    pad = 12
+    inner_x = x + pad
+    inner_w = w - 2 * pad
+    cy = y + pad
+
+    f_label = _vfont(JETBRAINS, 13, 500)
+    draw.text((inner_x, cy), "OF THE MIND", font=f_label, fill=accent)
+    cy += 18
+    draw.line([(inner_x, cy), (x + w - pad, cy)], fill=fg, width=1)
+    cy += 10
+
+    text = quote.text[:160]
+    first_char = text[0]
+    rest_text = '"' + text[1:] + '"'
+
+    f_dc = _vfont(PLAYFAIR, 62, 900)
+    dc_bbox = draw.textbbox((0, 0), first_char, font=f_dc)
+    dc_w = dc_bbox[2] - dc_bbox[0] + 6
+    dc_h = dc_bbox[3] - dc_bbox[1]
+
+    draw.text((inner_x, cy), first_char, font=f_dc, fill=accent)
+
+    f_quote = _vfont(SOURCE_SERIF_ITALIC, 21, 400)
+    line_h = 28
+
+    narrow_w = inner_w - dc_w
+    cap_lines = max(1, math.ceil(dc_h / line_h))
+
+    narrow_wrapped = wrap_text(draw, rest_text, f_quote, max_width=narrow_w)
+    alongside = narrow_wrapped[:cap_lines]
+    overflow_words = " ".join(narrow_wrapped[cap_lines:])
+
+    for i, line in enumerate(alongside):
+        draw.text((inner_x + dc_w, cy + i * line_h), line, font=f_quote, fill=fg)
+
+    cy_overflow = cy + cap_lines * line_h
+    if overflow_words:
+        for line in wrap_text(draw, overflow_words, f_quote, max_width=inner_w):
+            if cy_overflow + line_h > y + h - 40:
+                break
+            draw.text((inner_x, cy_overflow), line, font=f_quote, fill=fg)
+            cy_overflow += line_h
+
+    attr_y = min(cy_overflow + 12, y + h - 28)
+    draw.line([(inner_x, attr_y), (x + w - pad, attr_y)], fill=fg, width=1)
+    attr_y += 5
+
+    f_attr = _vfont(JETBRAINS, 12, 400)
+    author_upper = quote.author.upper()
+    draw.text((x + w - pad, attr_y), author_upper, font=f_attr, fill=accent, anchor="rt")
+    auth_w = draw.textbbox((0, 0), author_upper, font=f_attr)[2]
+    draw.text((x + w - pad - auth_w - 4, attr_y), "—", font=f_attr, fill=fg, anchor="rt")
 
 
 def render_almanac(
