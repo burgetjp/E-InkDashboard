@@ -8,6 +8,7 @@ from apscheduler.triggers.cron import CronTrigger
 from app.cache import DashboardCache, cache as _default_cache
 from app.icons import load_all_icons
 from app.quotes import fetch_quote
+from app.render_almanac import render_almanac
 from app.render_joe import render_joe
 from app.render_sam import render_sam
 from app.weather import fetch_weather
@@ -40,7 +41,6 @@ async def refresh_dashboard(
         logger.warning("ZenQuotes fetch failed: %s", exc)
 
     if weather is None or quote is None:
-        # Keep previous cached PNGs; update status flags only
         cache.noaa_ok = noaa_ok
         cache.quotes_ok = quotes_ok
         return
@@ -48,6 +48,13 @@ async def refresh_dashboard(
     joe_png = render_joe(weather, quote, icons)
     sam_png = render_sam(weather, quote, icons)
     cache.store(joe_png, sam_png, noaa_ok=noaa_ok, quotes_ok=quotes_ok)
+
+    cache.store_almanac(
+        classic=render_almanac(weather, quote, icons, variant="classic", inverted=False),
+        classic_inv=render_almanac(weather, quote, icons, variant="classic", inverted=True),
+        modern=render_almanac(weather, quote, icons, variant="modern", inverted=False),
+        modern_inv=render_almanac(weather, quote, icons, variant="modern", inverted=True),
+    )
 
 
 def start_scheduler(noaa_grid: str = "PSR/166,61") -> None:
