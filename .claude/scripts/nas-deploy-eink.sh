@@ -2,49 +2,54 @@
 set -euo pipefail
 
 ENV_FILE="/Users/joeburgett/Working/E-InkDashboard/.env"
+BUILD_CONTEXT="/Users/joeburgett/Working/E-InkDashboard/eink-dashboard/synology"
 COMPOSE_DIR="/volume1/docker/E-INK-Dashboard"
 DOCKER=/usr/local/bin/docker
-IMAGE_NAME="inky-dashboard"
-BUILD_CONTEXT="/Users/joeburgett/Working/E-InkDashboard/eink-dashboard/synology"
-COMPOSE_FILE="${BUILD_CONTEXT}/docker-compose.yml"
-TARBALL="/tmp/${IMAGE_NAME}.tar.gz"
 
 NAS_PASS="$(grep '^NAS_PASS=' "$ENV_FILE" | cut -d= -f2-)"
 NAS_USER="$(grep '^NAS_USER=' "$ENV_FILE" | cut -d= -f2-)"
 NAS_HOST="$(grep '^NAS_HOST=' "$ENV_FILE" | cut -d= -f2-)"
 
 SSH="sshpass -p $NAS_PASS ssh -o StrictHostKeyChecking=no -o LogLevel=ERROR ${NAS_USER}@${NAS_HOST}"
-SCP="sshpass -p $NAS_PASS scp -o StrictHostKeyChecking=no -o LogLevel=ERROR"
 
 echo "=== Connectivity check ==="
 $SSH "echo connected"
 
-echo "=== Building image locally ==="
-docker build -t "${IMAGE_NAME}:latest" "$BUILD_CONTEXT"
-
-echo "=== Saving image ==="
-docker save "${IMAGE_NAME}:latest" | gzip > "$TARBALL"
-
-echo "=== Uploading to NAS ==="
-$SCP "$TARBALL" "${NAS_USER}@${NAS_HOST}:/tmp/${IMAGE_NAME}.tar.gz"
+echo "=== Creating compose directory on NAS ==="
 $SSH "
   PASS='$NAS_PASS'
   echo \"\$PASS\" | sudo -S mkdir -p '$COMPOSE_DIR'
 "
-$SCP "$COMPOSE_FILE" "${NAS_USER}@${NAS_HOST}:${COMPOSE_DIR}/docker-compose.yml"
 
-echo "=== Loading image on NAS ==="
+echo "=== Copying source files to NAS ==="
+# Pipe tar to /tmp first (no sudo needed); extract separately so sudo -S can read password from stdin
+tar -C "$BUILD_CONTEXT" -czf - \
+  Dockerfile requirements.txt docker-compose.yml app/ assets/ \
+  | sshpass -p "$NAS_PASS" ssh \
+      -o StrictHostKeyChecking=no -o LogLevel=ERROR \
+      "${NAS_USER}@${NAS_HOST}" \
+      "cat > /tmp/eink-deploy.tar.gz"
+
 $SSH "
   PASS='$NAS_PASS'
-  echo \"\$PASS\" | sudo -S $DOCKER load -i /tmp/${IMAGE_NAME}.tar.gz
-  rm /tmp/${IMAGE_NAME}.tar.gz
+  echo \"\$PASS\" | sudo -S tar -xzf /tmp/eink-deploy.tar.gz -C '$COMPOSE_DIR'
+  rm /tmp/eink-deploy.tar.gz
 "
 
-echo "=== Recreating container ==="
+echo "=== Stopping existing containers on NAS ==="
 $SSH "
   PASS='$NAS_PASS'
   cd '$COMPOSE_DIR'
-  echo \"\$PASS\" | sudo -S $DOCKER compose up -d --force-recreate ${IMAGE_NAME}
+  echo \"\$PASS\" | sudo -S $DOCKER compose down --remove-orphans || true
+  echo \"\$PASS\" | sudo -S $DOCKER stop e-ink-dashboard-prod-inky-dashboard-1 2>/dev/null || true
+  echo \"\$PASS\" | sudo -S $DOCKER rm e-ink-dashboard-prod-inky-dashboard-1 2>/dev/null || true
+"
+
+echo "=== Building and recreating container on NAS ==="
+$SSH "
+  PASS='$NAS_PASS'
+  cd '$COMPOSE_DIR'
+  echo \"\$PASS\" | sudo -S $DOCKER compose up --build -d inky-dashboard
 "
 
 echo "=== Running containers ==="

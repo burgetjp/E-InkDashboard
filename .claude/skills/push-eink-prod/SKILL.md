@@ -1,13 +1,13 @@
 ---
 name: push-eink-prod
-description: Use when deploying a new build of the e-ink dashboard to the Synology NAS, after code changes to the FastAPI server, renderer, or assets. Builds the image locally from eink-dashboard/synology/, transfers it to the NAS, and restarts the container.
+description: Use when deploying a new build of the e-ink dashboard to the Synology NAS, after code changes to the FastAPI server, renderer, or assets. Copies source files to the NAS and builds the Docker image there, then restarts the container.
 ---
 
 # Push E-Ink Dashboard to Prod
 
 ## Overview
 
-Builds the Docker image locally from the synology build context, ships the tarball to the NAS via SCP, loads it, and recreates the container. No registry required.
+SCPs the source files to the NAS and builds the Docker image on the Synology. No local Docker required.
 
 NAS: `10.0.10.123`  
 Docker project dir: `/volume1/docker/E-INK-Dashboard/`  
@@ -25,12 +25,10 @@ bash /Users/joeburgett/Working/E-InkDashboard/.claude/scripts/nas-deploy-eink.sh
 
 The script:
 1. Connects via `sshpass` (no SSH password prompt)
-2. Builds `inky-dashboard:latest` from `eink-dashboard/synology/`
-3. Saves the image as a gzipped tarball and SCPs it to `/tmp/` on the NAS
-4. Creates the compose directory if it doesn't exist, SCPs `docker-compose.yml`
-5. Loads the image and removes the temp tarball
-6. Recreates the container (`--force-recreate`)
-7. Polls `GET /dashboard/joe.png` up to 60s until it returns HTTP 200
+2. Creates the compose directory on the NAS (`/volume1/docker/E-INK-Dashboard/`)
+3. SCPs `Dockerfile`, `requirements.txt`, `docker-compose.yml`, `app/*.py`, and `assets/fonts/*` to the NAS
+4. SSHs in and runs `docker compose up --build -d --force-recreate`
+5. Polls `GET /dashboard/joe.png` up to 60s until it returns HTTP 200
 
 ## Expected Results
 
