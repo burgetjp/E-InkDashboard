@@ -109,7 +109,24 @@ def _draw_masthead(
     fg: str,
     accent: str,
 ) -> None:
-    raise NotImplementedError
+    """Draw Zone A: Masthead (~62px tall, starts at MAST_Y)."""
+    cx = W // 2
+
+    if variant == "classic":
+        f_ribbon = _vfont(JETBRAINS, 12, 400)
+        draw.text((CONTENT_X, MAST_Y + 4), VOL_LABEL.upper(), font=f_ribbon, fill=accent)
+        draw.text((CONTENT_RIGHT, MAST_Y + 4), ISSUE_LABEL, font=f_ribbon, fill=accent, anchor="rt")
+
+        f_title = _vfont(PLAYFAIR, 38, 900)
+        draw.text((cx, MAST_Y + 24), "The JDU Almanac", font=f_title, fill=fg, anchor="mt")
+
+        f_sub = _vfont(PLAYFAIR_ITALIC, 14, 700)
+        draw.text((cx, MAST_Y + 50), "— a daily dashboard of weather & thought —",
+                  font=f_sub, fill=accent, anchor="mt")
+
+    else:  # modern
+        f_title = _vfont(PLAYFAIR, 34, 900)
+        draw.text((CONTENT_X, MAST_Y + 16), "JDU Almanac", font=f_title, fill=fg, anchor="lt")
 
 
 def _draw_colophon(
@@ -118,7 +135,17 @@ def _draw_colophon(
     fg: str,
     accent: str,
 ) -> None:
-    raise NotImplementedError
+    """Draw Zone D: Colophon (~26px tall, starts at COLON_Y)."""
+    f = _vfont(JETBRAINS, 11, 400)
+    cy = COLON_Y + (COLOPHON_H - 14) // 2
+
+    draw.line([(CONTENT_X, COLON_Y), (CONTENT_RIGHT, COLON_Y)], fill=fg, width=2)
+
+    draw.text((CONTENT_X, cy), "PRINTED IN INK", font=f, fill=fg)
+    draw.text((CONTENT_RIGHT, cy), "INKY · 7.3″ · 800×480", font=f, fill=fg, anchor="rt")
+
+    if variant == "classic":
+        draw.text((W // 2, cy), "✦ ✦ ✦", font=f, fill=accent, anchor="mt")
 
 
 def _draw_dateband(
