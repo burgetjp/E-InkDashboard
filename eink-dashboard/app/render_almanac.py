@@ -154,7 +154,37 @@ def _draw_dateband(
     fg: str,
     accent: str,
 ) -> None:
-    raise NotImplementedError
+    """Draw Zone B: Dateband (~30px tall, starts at DATE_Y)."""
+    now = datetime.now(ZoneInfo("America/Phoenix"))
+    day = now.strftime("%A").upper()
+    month_day = now.strftime("%B %-d").upper()
+    year_roman = _roman_year(now.year)
+
+    f = _vfont(JETBRAINS, 13, 400)
+    cy = DATE_Y + (DATEBAND_H - 16) // 2
+
+    draw.line([(CONTENT_X, DATE_Y), (CONTENT_RIGHT, DATE_Y)], fill=fg, width=2)
+    draw.line([(CONTENT_X, DATE_BOT - 1), (CONTENT_RIGHT, DATE_BOT - 1)], fill=fg, width=1)
+
+    if variant == "classic":
+        tokens = [day, f"{month_day} · {year_roman}", LOCATION_COORDS]
+        sep = "  ·  "
+
+        total_w = sum(draw.textbbox((0, 0), t, font=f)[2] for t in tokens)
+        total_w += sum(draw.textbbox((0, 0), sep, font=f)[2] for _ in range(len(tokens) - 1))
+        sx = W // 2 - total_w // 2
+
+        for i, token in enumerate(tokens):
+            draw.text((sx, cy), token, font=f, fill=fg)
+            sx += draw.textbbox((0, 0), token, font=f)[2]
+            if i < len(tokens) - 1:
+                draw.text((sx, cy), sep, font=f, fill=accent)
+                sx += draw.textbbox((0, 0), sep, font=f)[2]
+
+    else:  # modern: day left, date right, no coordinates
+        date_str = f"{month_day} · {year_roman}"
+        draw.text((CONTENT_X, cy), day, font=f, fill=fg)
+        draw.text((CONTENT_RIGHT, cy), date_str, font=f, fill=fg, anchor="rt")
 
 
 def _draw_weather_panel(
