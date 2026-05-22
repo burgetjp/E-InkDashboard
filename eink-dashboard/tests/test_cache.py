@@ -56,3 +56,38 @@ def test_store_keeps_previous_on_partial_failure():
     # Simulate keeping old data (caller skips store on failure)
     assert c.get_joe() == joe
     assert c.get_sam() == sam
+
+
+def test_almanac_slots_start_empty():
+    c = DashboardCache()
+    assert c.almanac_classic is None
+    assert c.almanac_classic_inv is None
+    assert c.almanac_modern is None
+    assert c.almanac_modern_inv is None
+
+
+def test_store_almanac_and_retrieve():
+    c = DashboardCache()
+    classic = _make_png("red")
+    classic_inv = _make_png("yellow")
+    modern = _make_png("black")
+    modern_inv = _make_png("white")
+    c.store_almanac(classic, classic_inv, modern, modern_inv)
+    assert c.get_almanac("classic") == classic
+    assert c.get_almanac("classic-inv") == classic_inv
+    assert c.get_almanac("modern") == modern
+    assert c.get_almanac("modern-inv") == modern_inv
+
+
+def test_get_almanac_fallback_when_empty():
+    c = DashboardCache()
+    result = c.get_almanac("classic")
+    assert isinstance(result, bytes)
+    img = Image.open(io.BytesIO(result))
+    assert img.size == (800, 480)
+
+
+def test_get_almanac_unknown_variant_returns_fallback():
+    c = DashboardCache()
+    result = c.get_almanac("nonexistent")
+    assert isinstance(result, bytes)
