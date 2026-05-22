@@ -7,6 +7,7 @@ from fastapi.responses import Response, JSONResponse
 
 from app.cache import cache
 from app.config import settings
+from app.proto_router import proto_router
 from app.scheduler import refresh_dashboard, scheduler, start_scheduler
 
 
@@ -19,6 +20,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="InkyDashboard", lifespan=lifespan)
+app.include_router(proto_router, prefix="/proto")
 
 
 @app.get("/dashboard/joe.png")

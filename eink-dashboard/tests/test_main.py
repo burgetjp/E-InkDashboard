@@ -70,3 +70,29 @@ def test_health_endpoint(client):
     assert "last_refresh" in data
     assert "noaa_ok" in data
     assert "quotes_ok" in data
+
+
+def test_almanac_classic_endpoint_returns_png(client):
+    resp = client.get("/proto/almanac-classic.png")
+    assert resp.status_code == 200
+    assert resp.headers["content-type"] == "image/png"
+    img = Image.open(io.BytesIO(resp.content))
+    assert img.size == (800, 480)
+
+
+def test_almanac_classic_inv_endpoint_returns_png(client):
+    resp = client.get("/proto/almanac-classic-inv.png")
+    assert resp.status_code == 200
+    assert resp.headers["content-type"] == "image/png"
+
+
+def test_almanac_modern_endpoint_returns_png(client):
+    resp = client.get("/proto/almanac-modern.png")
+    assert resp.status_code == 200
+    assert resp.headers["content-type"] == "image/png"
+
+
+def test_almanac_modern_inv_endpoint_returns_png(client):
+    resp = client.get("/proto/almanac-modern-inv.png")
+    assert resp.status_code == 200
+    assert resp.headers["content-type"] == "image/png"
