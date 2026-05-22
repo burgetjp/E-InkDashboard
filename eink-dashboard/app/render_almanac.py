@@ -319,4 +319,40 @@ def render_almanac(
     variant: str,
     inverted: bool,
 ) -> bytes:
-    raise NotImplementedError
+    """Render one of four JDU Almanac prototype variants at 800×480."""
+    bg, fg, accent = _colors(variant, inverted)
+    img = Image.new("RGB", (W, H), bg)
+    draw = ImageDraw.Draw(img)
+
+    draw.rectangle(
+        [(OUTER_BLEED, OUTER_BLEED), (W - OUTER_BLEED - 1, H - OUTER_BLEED - 1)],
+        outline=fg,
+        width=FRAME_W,
+    )
+
+    pin_y_top = OUTER_BLEED + FRAME_W + PINSTRIPE_OFFSET
+    pin_y_bot = H - OUTER_BLEED - FRAME_W - PINSTRIPE_OFFSET
+    draw.line([(INNER_X + 2, pin_y_top), (W - INNER_X - 2, pin_y_top)], fill=fg, width=1)
+    draw.line([(INNER_X + 2, pin_y_bot), (W - INNER_X - 2, pin_y_bot)], fill=fg, width=1)
+
+    _draw_masthead(draw, variant, fg, accent)
+    _draw_dateband(draw, variant, fg, accent)
+
+    draw.line([(DIVIDER_X, BODY_Y + 8), (DIVIDER_X, COLON_Y - 8)], fill=fg, width=1)
+
+    _draw_weather_panel(
+        img, draw, weather, icons,
+        x=CONTENT_X, y=BODY_Y, w=WX_W, h=BODY_H,
+        fg=fg, accent=accent,
+    )
+    _draw_quote_panel(
+        draw, quote,
+        x=DIVIDER_X + 1, y=BODY_Y, w=CONTENT_RIGHT - DIVIDER_X - 1, h=BODY_H,
+        fg=fg, accent=accent,
+    )
+
+    _draw_colophon(draw, variant, fg, accent)
+
+    buf = io.BytesIO()
+    img.save(buf, format="PNG")
+    return buf.getvalue()
