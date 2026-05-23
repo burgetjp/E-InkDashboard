@@ -25,6 +25,10 @@ def _make_fallback_png(width: int, height: int, message: str) -> bytes:
 class DashboardCache:
     joe_png: Optional[bytes] = field(default=None)
     sam_png: Optional[bytes] = field(default=None)
+    almanac_classic: Optional[bytes] = field(default=None)
+    almanac_classic_inv: Optional[bytes] = field(default=None)
+    almanac_modern: Optional[bytes] = field(default=None)
+    almanac_modern_inv: Optional[bytes] = field(default=None)
     last_refresh: Optional[datetime] = field(default=None)
     noaa_ok: bool = False
     quotes_ok: bool = False
@@ -36,6 +40,18 @@ class DashboardCache:
         self.noaa_ok = noaa_ok
         self.quotes_ok = quotes_ok
 
+    def store_almanac(
+        self,
+        classic: bytes,
+        classic_inv: bytes,
+        modern: bytes,
+        modern_inv: bytes,
+    ) -> None:
+        self.almanac_classic = classic
+        self.almanac_classic_inv = classic_inv
+        self.almanac_modern = modern
+        self.almanac_modern_inv = modern_inv
+
     def get_joe(self) -> bytes:
         if self.joe_png is None:
             return _make_fallback_png(800, 480, "Dashboard starting…")
@@ -45,6 +61,17 @@ class DashboardCache:
         if self.sam_png is None:
             return _make_fallback_png(600, 400, "Dashboard starting…")
         return self.sam_png
+
+    def get_almanac(self, variant: str) -> bytes:
+        data = {
+            "classic": self.almanac_classic,
+            "classic-inv": self.almanac_classic_inv,
+            "modern": self.almanac_modern,
+            "modern-inv": self.almanac_modern_inv,
+        }.get(variant)
+        if data is None:
+            return _make_fallback_png(800, 480, "Almanac starting…")
+        return data
 
 
 cache = DashboardCache()

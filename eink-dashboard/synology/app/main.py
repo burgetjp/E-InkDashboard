@@ -7,6 +7,7 @@ from fastapi.responses import Response, JSONResponse
 
 from app.cache import cache
 from app.config import settings
+from app.proto_router import proto_router
 from app.scheduler import refresh_dashboard, scheduler, start_scheduler
 
 
@@ -19,6 +20,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="InkyDashboard", lifespan=lifespan)
+app.include_router(proto_router, prefix="/proto")
 
 
 @app.get("/dashboard/joe.png")
@@ -29,6 +31,12 @@ async def joe_png() -> Response:
 @app.get("/dashboard/sam.png")
 async def sam_png() -> Response:
     return Response(content=cache.get_sam(), media_type="image/png")
+
+
+@app.post("/admin/refresh")
+async def admin_refresh() -> JSONResponse:
+    await refresh_dashboard(cache=cache, noaa_grid=settings.noaa_grid)
+    return JSONResponse({"refreshed": True, "noaa_ok": cache.noaa_ok, "quotes_ok": cache.quotes_ok})
 
 
 @app.get("/health")

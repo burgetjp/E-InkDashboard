@@ -171,7 +171,7 @@ All reused from existing production scheduler — no new API calls:
 
 Static config values (coordinates, vol/issue numbers) are hardcoded constants in `render_almanac.py`:
 ```python
-LOCATION_COORDS = "112°W · 33°N"   # Phoenix, AZ
+LOCATION_COORDS = "112°W · 34°N"   # Phoenix, AZ (33.5°N, -111.9°W)
 VOL_LABEL = "Vol. III"
 ISSUE_LABEL = "№ 142"              # Update manually
 ```

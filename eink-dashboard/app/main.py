@@ -33,6 +33,12 @@ async def sam_png() -> Response:
     return Response(content=cache.get_sam(), media_type="image/png")
 
 
+@app.post("/admin/refresh")
+async def admin_refresh() -> JSONResponse:
+    await refresh_dashboard(cache=cache, noaa_grid=settings.noaa_grid)
+    return JSONResponse({"refreshed": True, "noaa_ok": cache.noaa_ok, "quotes_ok": cache.quotes_ok})
+
+
 @app.get("/health")
 async def health() -> JSONResponse:
     last = cache.last_refresh.isoformat() if cache.last_refresh else None
