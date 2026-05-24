@@ -48,7 +48,6 @@ YELLOW = "#f2c200"
 # --- Static config ---
 LOCATION_COORDS = "112°W · 34°N"   # Phoenix, AZ (33.5°N, -111.9°W)
 VOL_LABEL = "Vol. III"
-ISSUE_LABEL = "№ 142"
 
 # --- Font paths ---
 _FONT_DIR = os.path.join(os.path.dirname(__file__), "..", "assets", "fonts")
@@ -112,8 +111,10 @@ def _draw_masthead(
     cx = W // 2
 
     if variant == "classic":
-        f_ribbon = _vfont(JETBRAINS, 12, 400)
-        draw.text((CONTENT_RIGHT, MAST_Y + 16), ISSUE_LABEL, font=f_ribbon, fill=accent, anchor="rt")
+        now = datetime.now(ZoneInfo("America/Phoenix"))
+        issue_label = f"№ {now.timetuple().tm_yday}"
+        f_ribbon = _vfont(JETBRAINS, 20, 700)
+        draw.text((CONTENT_RIGHT, MAST_Y + 16), issue_label, font=f_ribbon, fill=accent, anchor="rt")
 
         f_title = _vfont(PLAYFAIR, 38, 900)
         draw.text((cx, MAST_Y + 26), "The JDU Almanac", font=f_title, fill=fg, anchor="mt")
