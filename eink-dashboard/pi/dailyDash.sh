@@ -17,7 +17,9 @@ until curl -sf --max-time 5 "${SERVER}/health" > /dev/null 2>&1; do
     _elapsed=$((_elapsed + 10))
 done
 
-curl -sf --retry 3 --retry-delay 5 --max-time 30 "${SERVER}/proto/almanac-classic.png" > "${TMP_PNG}" || exit 1
+VARIANTS=("almanac-classic" "almanac-classic-inv" "almanac-modern" "almanac-modern-inv")
+INDEX=$(( $(date +%-H) % 4 ))
+curl -sf --retry 3 --retry-delay 5 --max-time 30 "${SERVER}/proto/${VARIANTS[$INDEX]}.png" > "${TMP_PNG}" || exit 1
 /home/red/Dev/scripts/dailyClear.py
 /home/red/Dev/scripts/dailyEink.py "${TMP_PNG}"
 rm -f "${TMP_PNG}"
