@@ -120,7 +120,7 @@ def _draw_masthead(
         draw.text((cx, MAST_Y + 26), "The JDU Almanac", font=f_title, fill=fg, anchor="mt")
 
         f_sub = _vfont(PLAYFAIR_ITALIC, 14, 700)
-        draw.text((cx, MAST_Y + 78), "— a daily dashboard of weather & thought —",
+        draw.text((cx, MAST_Y + 68), "— a daily dashboard of weather & thought —",
                   font=f_sub, fill=accent, anchor="mt")
 
     else:  # modern
@@ -140,7 +140,9 @@ def _draw_colophon(
 
     draw.line([(CONTENT_X, COLON_Y), (CONTENT_RIGHT, COLON_Y)], fill=fg, width=2)
 
-    draw.text((CONTENT_X, cy), "PRINTED IN E-INK", font=f, fill=fg)
+    now = datetime.now(ZoneInfo("America/Phoenix"))
+    timestamp = now.strftime("%-I:%M %p")
+    draw.text((CONTENT_X, cy), f"PRINTED IN E-INK at {timestamp}", font=f, fill=fg)
     draw.text((CONTENT_RIGHT, cy), "INKY · 7.3″ · 800×480", font=f, fill=fg, anchor="rt")
 
 
