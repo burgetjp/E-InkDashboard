@@ -169,3 +169,32 @@ def test_render_almanac_missing_icon(variant, inverted, sample_weather, sample_q
     result = render_almanac(sample_weather, sample_quote, {}, variant=variant, inverted=inverted)
     img = Image.open(io.BytesIO(result))
     assert img.size == (800, 480)
+
+
+from app.render_almanac import render_almanac_sam
+
+
+def test_render_almanac_sam_returns_png_bytes(sample_weather, sample_quote, blank_icon):
+    result = render_almanac_sam(sample_weather, sample_quote, {"clear-day": blank_icon})
+    assert isinstance(result, bytes)
+    assert len(result) > 1000
+
+
+def test_render_almanac_sam_correct_dimensions(sample_weather, sample_quote, blank_icon):
+    result = render_almanac_sam(sample_weather, sample_quote, {"clear-day": blank_icon})
+    img = Image.open(io.BytesIO(result))
+    assert img.size == (600, 400)
+
+
+def test_render_almanac_sam_missing_icon(sample_weather, sample_quote):
+    result = render_almanac_sam(sample_weather, sample_quote, {})
+    img = Image.open(io.BytesIO(result))
+    assert img.size == (600, 400)
+
+
+def test_render_almanac_sam_inverted_background(sample_weather, sample_quote, blank_icon):
+    result = render_almanac_sam(sample_weather, sample_quote, {"clear-day": blank_icon})
+    img = Image.open(io.BytesIO(result))
+    # Center of canvas should be the dark (#0c0c0c) background
+    r, g, b = img.getpixel((300, 200))
+    assert r < 20 and g < 20 and b < 20
