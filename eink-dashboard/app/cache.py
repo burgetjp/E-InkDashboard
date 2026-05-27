@@ -29,6 +29,7 @@ class DashboardCache:
     almanac_classic_inv: Optional[bytes] = field(default=None)
     almanac_modern: Optional[bytes] = field(default=None)
     almanac_modern_inv: Optional[bytes] = field(default=None)
+    almanac_sam: Optional[bytes] = field(default=None)
     last_refresh: Optional[datetime] = field(default=None)
     noaa_ok: bool = False
     quotes_ok: bool = False
@@ -51,6 +52,14 @@ class DashboardCache:
         self.almanac_classic_inv = classic_inv
         self.almanac_modern = modern
         self.almanac_modern_inv = modern_inv
+
+    def store_almanac_sam(self, sam: bytes) -> None:
+        self.almanac_sam = sam
+
+    def get_almanac_sam(self) -> bytes:
+        if self.almanac_sam is None:
+            return _make_fallback_png(600, 400, "Almanac starting…")
+        return self.almanac_sam
 
     def get_joe(self) -> bytes:
         if self.joe_png is None:

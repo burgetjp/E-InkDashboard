@@ -91,3 +91,23 @@ def test_get_almanac_unknown_variant_returns_fallback():
     c = DashboardCache()
     result = c.get_almanac("nonexistent")
     assert isinstance(result, bytes)
+
+
+def test_almanac_sam_slot_starts_empty():
+    c = DashboardCache()
+    assert c.almanac_sam is None
+
+
+def test_store_and_get_almanac_sam():
+    c = DashboardCache()
+    stub = _make_png("gray")
+    c.store_almanac_sam(stub)
+    assert c.get_almanac_sam() == stub
+
+
+def test_get_almanac_sam_fallback_when_empty():
+    c = DashboardCache()
+    result = c.get_almanac_sam()
+    assert isinstance(result, bytes)
+    img = Image.open(io.BytesIO(result))
+    assert img.size == (600, 400)
