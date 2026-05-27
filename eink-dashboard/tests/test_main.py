@@ -96,3 +96,11 @@ def test_almanac_modern_inv_endpoint_returns_png(client):
     resp = client.get("/proto/almanac-modern-inv.png")
     assert resp.status_code == 200
     assert resp.headers["content-type"] == "image/png"
+
+
+def test_almanac_sam_endpoint_returns_png(client):
+    resp = client.get("/proto/almanac-sam.png")
+    assert resp.status_code == 200
+    assert resp.headers["content-type"] == "image/png"
+    img = Image.open(io.BytesIO(resp.content))
+    assert img.size == (600, 400)

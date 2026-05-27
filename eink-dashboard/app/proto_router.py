@@ -26,3 +26,8 @@ async def almanac_modern() -> Response:
 @proto_router.get("/almanac-modern-inv.png")
 async def almanac_modern_inv() -> Response:
     return Response(content=cache.get_almanac("modern-inv"), media_type="image/png")
+
+
+@proto_router.get("/almanac-sam.png")
+async def almanac_sam() -> Response:
+    return Response(content=cache.get_almanac_sam(), media_type="image/png")
