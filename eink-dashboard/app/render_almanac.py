@@ -426,7 +426,7 @@ def render_almanac_sam(
     f_deg = _vfont(SOURCE_SERIF, 28, 700)
     draw.text((temp_bbox[2] + 2, cy + 4), "°", font=f_deg, fill=accent, anchor="lt")
 
-    cy += max(icon_size, 72) + 8
+    cy += icon_size + 8
 
     stat = f"{weather.short_forecast.upper()} · {weather.precip_percent}% RAIN"
     f_stat = _vfont(JETBRAINS, 10, 400)

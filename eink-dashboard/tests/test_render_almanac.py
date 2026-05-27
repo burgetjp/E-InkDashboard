@@ -7,7 +7,7 @@ from app.render_almanac import (
     _vfont, _colors, _roman_year,
     _draw_masthead, _draw_colophon, _draw_dateband,
     _draw_weather_panel, _draw_quote_panel,
-    render_almanac,
+    render_almanac, render_almanac_sam,
     PLAYFAIR, JETBRAINS,
     W, H,
 )
@@ -169,9 +169,6 @@ def test_render_almanac_missing_icon(variant, inverted, sample_weather, sample_q
     result = render_almanac(sample_weather, sample_quote, {}, variant=variant, inverted=inverted)
     img = Image.open(io.BytesIO(result))
     assert img.size == (800, 480)
-
-
-from app.render_almanac import render_almanac_sam
 
 
 def test_render_almanac_sam_returns_png_bytes(sample_weather, sample_quote, blank_icon):
