@@ -8,7 +8,7 @@ from apscheduler.triggers.cron import CronTrigger
 from app.cache import DashboardCache, cache as _default_cache
 from app.icons import load_all_icons
 from app.quotes import fetch_quote
-from app.render_almanac import render_almanac
+from app.render_almanac import render_almanac, render_almanac_sam
 from app.render_joe import render_joe
 from app.render_sam import render_sam
 from app.weather import fetch_weather
@@ -54,6 +54,9 @@ async def refresh_dashboard(
         classic_inv=render_almanac(weather, quote, icons, variant="classic", inverted=True),
         modern=render_almanac(weather, quote, icons, variant="modern", inverted=False),
         modern_inv=render_almanac(weather, quote, icons, variant="modern", inverted=True),
+    )
+    cache.store_almanac_sam(
+        render_almanac_sam(weather, quote, icons)
     )
 
 

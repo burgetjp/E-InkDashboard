@@ -74,3 +74,18 @@ async def test_refresh_dashboard_keeps_previous_on_noaa_failure():
     assert c.joe_png == old_joe
     assert c.sam_png == old_sam
     assert c.noaa_ok is False
+
+
+@respx.mock
+async def test_refresh_dashboard_populates_almanac_sam():
+    respx.get("https://api.weather.gov/gridpoints/PSR/166,61/forecast").mock(
+        return_value=httpx.Response(200, json=NOAA_RESP)
+    )
+    respx.get("https://zenquotes.io/api/random").mock(
+        return_value=httpx.Response(200, json=QUOTE_RESP)
+    )
+    c = DashboardCache()
+    with patch("app.scheduler.load_all_icons", return_value=_blank_icons()):
+        await refresh_dashboard(cache=c, noaa_grid="PSR/166,61")
+
+    assert c.almanac_sam is not None
