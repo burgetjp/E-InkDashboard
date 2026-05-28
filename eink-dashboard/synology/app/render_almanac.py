@@ -348,6 +348,7 @@ def render_almanac_sam(
     pinstripe_offset = 3
     masthead_h = 72
     dateband_h = 25
+    colophon_h = 22
     pad = 10
     inner_x = outer_bleed + frame_w        # 7
     content_x = inner_x + pad              # 17
@@ -357,8 +358,8 @@ def render_almanac_sam(
     date_y = mast_y + masthead_h           # 79
     date_bot = date_y + dateband_h         # 104
     body_y = date_bot                      # 104
-    body_bot = sh - inner_x               # 393
-    body_h = body_bot - body_y             # 289
+    colon_y = sh - inner_x - colophon_h   # 371
+    body_h = colon_y - body_y             # 267
     wx_w = round(content_w * 0.45)         # 255
     divider_x = content_x + wx_w           # 272
 
@@ -397,7 +398,7 @@ def render_almanac_sam(
     draw.text((content_right, cy_date), date_str, font=f_date, fill=fg, anchor="rm")
 
     # Vertical body divider
-    draw.line([(divider_x, body_y + 8), (divider_x, body_bot - 8)], fill=fg, width=1)
+    draw.line([(divider_x, body_y + 8), (divider_x, colon_y - 8)], fill=fg, width=1)
 
     # Zone C Left: Weather (inline — scaled for 255px column)
     wx_inner_x = content_x + pad   # 27
@@ -448,6 +449,13 @@ def render_almanac_sam(
         x=quote_x, y=body_y, w=quote_w, h=body_h,
         fg=fg, accent=accent,
     )
+
+    # Zone D: Colophon
+    f_colon = _vfont(JETBRAINS, 10, 400)
+    cy_colon = colon_y + colophon_h // 2
+    mid_x = (content_x + content_right) // 2
+    draw.line([(content_x, colon_y), (content_right, colon_y)], fill=fg, width=1)
+    draw.text((mid_x, cy_colon), "I LOVE YOU", font=f_colon, fill=accent, anchor="mm")
 
     buf = io.BytesIO()
     img.save(buf, format="PNG")
