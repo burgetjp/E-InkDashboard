@@ -391,11 +391,11 @@ def render_almanac_sam(
     month_day = now.strftime("%B %-d").upper()
     date_str = f"{month_day} · {_roman_year(now.year)}"
     f_date = _vfont(JETBRAINS, 11, 400)
-    cy_date = date_y + (dateband_h - 14) // 2
+    cy_date = date_y + dateband_h // 2
     draw.line([(content_x, date_y), (content_right, date_y)], fill=fg, width=2)
     draw.line([(content_x, date_bot - 1), (content_right, date_bot - 1)], fill=fg, width=1)
-    draw.text((content_x, cy_date), day, font=f_date, fill=fg)
-    draw.text((content_right, cy_date), date_str, font=f_date, fill=fg, anchor="rt")
+    draw.text((content_x, cy_date), day, font=f_date, fill=fg, anchor="lm")
+    draw.text((content_right, cy_date), date_str, font=f_date, fill=fg, anchor="rm")
 
     # Vertical body divider
     draw.line([(divider_x, body_y + 8), (divider_x, colon_y - 8)], fill=fg, width=1)
