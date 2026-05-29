@@ -63,7 +63,7 @@ async def refresh_dashboard(
 def start_scheduler(noaa_grid: str = "PSR/166,61") -> None:
     scheduler.add_job(
         refresh_dashboard,
-        CronTrigger(minute=0),
+        CronTrigger(minute=20),
         kwargs={"noaa_grid": noaa_grid},
         id="refresh_dashboard",
         replace_existing=True,
