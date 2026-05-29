@@ -19,8 +19,11 @@ class WeatherData:
     source: WeatherSource = "primary"
 
 
-_google_api = os.environ.get("GOOGLE_API", "")
-_GOOGLE_WEATHER_URL: str = f"{_google_api}&unitsSystem=IMPERIAL" if _google_api else ""
+_GOOGLE_WEATHER_URL: str = (
+    f"{os.environ.get('GOOGLE_API', '')}&unitsSystem=IMPERIAL"
+    if os.environ.get("GOOGLE_API")
+    else ""
+)
 _last_good_weather: Optional[WeatherData] = None
 
 
