@@ -10,7 +10,7 @@ from PIL import Image, ImageDraw, ImageFont
 from app.draw_utils import wrap_text
 from app.icons import select_icon_name
 from app.weather import WeatherData
-from app.quotes import QuoteData
+from app.quotes import QuoteData, QuoteSource
 
 # --- Canvas & zone constants ---
 W, H = 800, 480
@@ -128,11 +128,18 @@ def _draw_masthead(
         draw.text((CONTENT_X, MAST_Y + 16), "JDU Almanac", font=f_title, fill=fg, anchor="lt")
 
 
+def _colophon_label(source: QuoteSource, timestamp: str) -> str:
+    suffix = {"primary": "", "fallback": "*", "cached": "**"}[source]
+    return f"PRINTED IN E-INK at {timestamp}{suffix}"
+
+
 def _draw_colophon(
     draw: ImageDraw.ImageDraw,
     variant: str,
     fg: str,
     accent: str,
+    *,
+    source: QuoteSource = "primary",
 ) -> None:
     """Draw Zone D: Colophon (~26px tall, starts at COLON_Y)."""
     f = _vfont(JETBRAINS, 11, 400)
@@ -142,7 +149,7 @@ def _draw_colophon(
 
     now = datetime.now(ZoneInfo("America/Phoenix"))
     timestamp = now.strftime("%-I:%M %p")
-    draw.text((CONTENT_X, cy), f"PRINTED IN E-INK at {timestamp}", font=f, fill=fg)
+    draw.text((CONTENT_X, cy), _colophon_label(source, timestamp), font=f, fill=fg)
     draw.text((CONTENT_RIGHT, cy), "INKY · 7.3″ · 800×480", font=f, fill=fg, anchor="rt")
 
 
@@ -328,7 +335,7 @@ def render_almanac(
         fg=fg, accent=accent,
     )
 
-    _draw_colophon(draw, variant, fg, accent)
+    _draw_colophon(draw, variant, fg, accent, source=quote.source)
 
     buf = io.BytesIO()
     img.save(buf, format="PNG")
