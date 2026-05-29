@@ -7,6 +7,7 @@ from app.render_almanac import (
     _vfont, _colors, _roman_year,
     _draw_masthead, _draw_colophon, _draw_dateband,
     _draw_weather_panel, _draw_quote_panel,
+    _colophon_label,
     render_almanac, render_almanac_sam,
     PLAYFAIR, JETBRAINS,
     W, H,
@@ -85,11 +86,28 @@ def test_draw_masthead_modern_does_not_raise():
 
 def test_draw_colophon_classic_does_not_raise():
     img, draw = _blank_draw()
-    _draw_colophon(draw, "classic", "#0c0c0c", "#c01818")
+    _draw_colophon(draw, "classic", "#0c0c0c", "#c01818", source="primary")
 
 def test_draw_colophon_modern_does_not_raise():
     img, draw = _blank_draw()
-    _draw_colophon(draw, "modern", "#0c0c0c", "#0c0c0c")
+    _draw_colophon(draw, "modern", "#0c0c0c", "#0c0c0c", source="primary")
+
+
+# --- _colophon_label ---
+
+def test_colophon_label_primary_has_no_suffix():
+    label = _colophon_label("primary", "8:20 AM")
+    assert label == "PRINTED IN E-INK at 8:20 AM"
+
+
+def test_colophon_label_fallback_has_single_asterisk():
+    label = _colophon_label("fallback", "8:20 AM")
+    assert label == "PRINTED IN E-INK at 8:20 AM*"
+
+
+def test_colophon_label_cached_has_double_asterisk():
+    label = _colophon_label("cached", "8:20 AM")
+    assert label == "PRINTED IN E-INK at 8:20 AM**"
 
 
 # --- _draw_dateband ---
