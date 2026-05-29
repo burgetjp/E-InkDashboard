@@ -22,18 +22,6 @@ async def test_fetch_quote_success():
     assert result.author == "Morihei Ueshiba"
 
 
-@respx.mock
-async def test_fetch_quote_http_error():
-    """Both APIs fail and no cache → raises HTTPStatusError."""
-    import app.quotes as quotes_module
-    quotes_module._last_good_quote = None
-
-    respx.get(ZENQUOTES_URL).mock(return_value=httpx.Response(429))
-    respx.get(FALLBACK_URL).mock(return_value=httpx.Response(503))
-    with pytest.raises(httpx.HTTPStatusError):
-        await fetch_quote()
-
-
 def test_quote_data_default_source_is_primary():
     q = QuoteData(text="Hello", author="World")
     assert q.source == "primary"

@@ -35,6 +35,7 @@ async def fetch_quote() -> QuoteData:
         pass
 
     # Tier 2: Motivational Spark
+    last_exc: Optional[Exception] = None
     try:
         async with httpx.AsyncClient(timeout=10) as client:
             resp = await client.get(_FALLBACK_URL)
@@ -43,8 +44,8 @@ async def fetch_quote() -> QuoteData:
         result = QuoteData(text=data["quote"], author=data["author"], source="fallback")
         _last_good_quote = result
         return result
-    except Exception:
-        pass
+    except Exception as exc:
+        last_exc = exc
 
     # Tier 3: last cached quote
     if _last_good_quote is not None:
@@ -54,9 +55,5 @@ async def fetch_quote() -> QuoteData:
             source="cached",
         )
 
-    # All tiers exhausted — re-raise by calling fallback again to surface the error
-    async with httpx.AsyncClient(timeout=10) as client:
-        resp = await client.get(_FALLBACK_URL)
-        resp.raise_for_status()
-        data = resp.json()
-    return QuoteData(text=data["quote"], author=data["author"], source="fallback")
+    # All tiers exhausted
+    raise last_exc  # type: ignore[misc]
