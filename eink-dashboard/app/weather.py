@@ -1,6 +1,12 @@
+from __future__ import annotations
+
+import os
 from dataclasses import dataclass
+from typing import Literal, Optional
 
 import httpx
+
+WeatherSource = Literal["primary", "fallback", "cached"]
 
 
 @dataclass
@@ -10,6 +16,12 @@ class WeatherData:
     short_forecast: str
     detailed_forecast: str
     precip_percent: int
+    source: WeatherSource = "primary"
+
+
+_google_api = os.environ.get("GOOGLE_API", "")
+_GOOGLE_WEATHER_URL: str = f"{_google_api}&unitsSystem=IMPERIAL" if _google_api else ""
+_last_good_weather: Optional[WeatherData] = None
 
 
 async def fetch_weather(grid: str) -> WeatherData:

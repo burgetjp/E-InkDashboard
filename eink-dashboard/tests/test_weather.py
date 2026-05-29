@@ -61,3 +61,38 @@ async def test_fetch_weather_http_error():
     )
     with pytest.raises(httpx.HTTPStatusError):
         await fetch_weather("PSR/166,61")
+
+
+def test_weather_data_default_source_is_primary():
+    w = WeatherData(
+        period_name="Today",
+        temperature=91,
+        short_forecast="Sunny",
+        detailed_forecast="Sunny. High near 91.",
+        precip_percent=0,
+    )
+    assert w.source == "primary"
+
+
+def test_weather_data_accepts_fallback_source():
+    w = WeatherData(
+        period_name="Today",
+        temperature=91,
+        short_forecast="Sunny",
+        detailed_forecast="Sunny.",
+        precip_percent=0,
+        source="fallback",
+    )
+    assert w.source == "fallback"
+
+
+def test_weather_data_accepts_cached_source():
+    w = WeatherData(
+        period_name="Today",
+        temperature=91,
+        short_forecast="Sunny",
+        detailed_forecast="Sunny.",
+        precip_percent=0,
+        source="cached",
+    )
+    assert w.source == "cached"
