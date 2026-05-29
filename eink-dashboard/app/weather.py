@@ -52,26 +52,29 @@ async def fetch_weather(grid: str) -> WeatherData:
 
     # Tier 2: Google Weather
     last_exc: Optional[Exception] = None
-    try:
-        async with httpx.AsyncClient(timeout=10) as client:
-            resp = await client.get(_GOOGLE_WEATHER_URL)
-            resp.raise_for_status()
-            data = resp.json()
-        desc = data["weatherCondition"]["description"]["text"]
-        temp = round(data["currentConditionsHistory"]["maxTemperature"]["degrees"])
-        wind = data["wind"]["speed"]["value"]
-        result = WeatherData(
-            period_name="Tonight" if not data["isDaytime"] else "Today",
-            temperature=temp,
-            short_forecast=desc,
-            detailed_forecast=f"{desc}. High near {temp}°F. Wind {wind} mph.",
-            precip_percent=data["precipitation"]["probability"]["percent"],
-            source="fallback",
-        )
-        _last_good_weather = result
-        return result
-    except Exception as exc:
-        last_exc = exc
+    if not _GOOGLE_WEATHER_URL:
+        last_exc = RuntimeError("GOOGLE_API env var not configured")
+    else:
+        try:
+            async with httpx.AsyncClient(timeout=10) as client:
+                resp = await client.get(_GOOGLE_WEATHER_URL)
+                resp.raise_for_status()
+                data = resp.json()
+            desc = data["weatherCondition"]["description"]["text"]
+            temp = round(data["currentConditionsHistory"]["maxTemperature"]["degrees"])
+            wind = data["wind"]["speed"]["value"]
+            result = WeatherData(
+                period_name="Tonight" if not data["isDaytime"] else "Today",
+                temperature=temp,
+                short_forecast=desc,
+                detailed_forecast=f"{desc}. High near {temp}°F. Wind {wind} mph.",
+                precip_percent=data["precipitation"]["probability"]["percent"],
+                source="fallback",
+            )
+            _last_good_weather = result
+            return result
+        except Exception as exc:
+            last_exc = exc
 
     # Tier 3: module cache
     if _last_good_weather is not None:
