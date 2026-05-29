@@ -48,10 +48,17 @@ async def test_refresh_dashboard_populates_cache():
     assert c.last_refresh is not None
 
 
+GOOGLE_FALLBACK_URL = "https://weather.googleapis.com/v1/fake-scheduler"
+
+
 @respx.mock
-async def test_refresh_dashboard_keeps_previous_on_noaa_failure():
+async def test_refresh_dashboard_keeps_previous_on_noaa_failure(monkeypatch):
     import io
+    import app.weather as weather_module
     from PIL import Image as PILImage
+
+    monkeypatch.setattr(weather_module, "_last_good_weather", None)
+    monkeypatch.setattr(weather_module, "_GOOGLE_WEATHER_URL", GOOGLE_FALLBACK_URL)
 
     def _png():
         buf = io.BytesIO()
@@ -63,6 +70,9 @@ async def test_refresh_dashboard_keeps_previous_on_noaa_failure():
     c.store(old_joe, old_sam, noaa_ok=True, quotes_ok=True)
 
     respx.get("https://api.weather.gov/gridpoints/PSR/166,61/forecast").mock(
+        return_value=httpx.Response(503)
+    )
+    respx.get(GOOGLE_FALLBACK_URL).mock(
         return_value=httpx.Response(503)
     )
     respx.get("https://zenquotes.io/api/random").mock(
