@@ -8,3 +8,4 @@ services:
       - PORT=8000
       - NOAA_GRID=PSR/166,61
       - REFRESH_HOUR_INTERVAL=1
+      - GOOGLE_API
