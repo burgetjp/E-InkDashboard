@@ -26,3 +26,18 @@ async def test_fetch_quote_http_error():
     )
     with pytest.raises(httpx.HTTPStatusError):
         await fetch_quote()
+
+
+def test_quote_data_default_source_is_primary():
+    q = QuoteData(text="Hello", author="World")
+    assert q.source == "primary"
+
+
+def test_quote_data_accepts_fallback_source():
+    q = QuoteData(text="Hello", author="World", source="fallback")
+    assert q.source == "fallback"
+
+
+def test_quote_data_accepts_cached_source():
+    q = QuoteData(text="Hello", author="World", source="cached")
+    assert q.source == "cached"
