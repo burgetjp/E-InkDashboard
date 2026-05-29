@@ -86,27 +86,42 @@ def test_draw_masthead_modern_does_not_raise():
 
 def test_draw_colophon_classic_does_not_raise():
     img, draw = _blank_draw()
-    _draw_colophon(draw, "classic", "#0c0c0c", "#c01818", source="primary")
+    _draw_colophon(draw, "classic", "#0c0c0c", "#c01818", quote_source="primary", weather_source="primary")
 
 def test_draw_colophon_modern_does_not_raise():
     img, draw = _blank_draw()
-    _draw_colophon(draw, "modern", "#0c0c0c", "#0c0c0c", source="primary")
+    _draw_colophon(draw, "modern", "#0c0c0c", "#0c0c0c", quote_source="primary", weather_source="primary")
 
 
 # --- _colophon_label ---
 
 def test_colophon_label_primary_has_no_suffix():
-    label = _colophon_label("primary", "8:20 AM")
+    label = _colophon_label("primary", "primary", "8:20 AM")
     assert label == "PRINTED IN E-INK at 8:20 AM"
 
 
 def test_colophon_label_fallback_has_single_asterisk():
-    label = _colophon_label("fallback", "8:20 AM")
+    label = _colophon_label("fallback", "primary", "8:20 AM")
     assert label == "PRINTED IN E-INK at 8:20 AM*"
 
 
 def test_colophon_label_cached_has_double_asterisk():
-    label = _colophon_label("cached", "8:20 AM")
+    label = _colophon_label("cached", "primary", "8:20 AM")
+    assert label == "PRINTED IN E-INK at 8:20 AM**"
+
+
+def test_colophon_label_weather_fallback_beats_quote_primary():
+    label = _colophon_label("primary", "fallback", "8:20 AM")
+    assert label == "PRINTED IN E-INK at 8:20 AM*"
+
+
+def test_colophon_label_weather_cached_beats_quote_primary():
+    label = _colophon_label("primary", "cached", "8:20 AM")
+    assert label == "PRINTED IN E-INK at 8:20 AM**"
+
+
+def test_colophon_label_worst_wins_mixed():
+    label = _colophon_label("fallback", "cached", "8:20 AM")
     assert label == "PRINTED IN E-INK at 8:20 AM**"
 
 
